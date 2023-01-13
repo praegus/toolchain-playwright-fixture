@@ -6,13 +6,12 @@
 
     <groupId>nl.praegus</groupId>
     <artifactId>toolchain-playwright-fixture</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <description>A FitNesse fixture for writing browser tests using the Playwright Java API</description>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.release>11</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <playwright.version>1.28.1</playwright.version>
         <fitnesse.version>20221219</fitnesse.version>
