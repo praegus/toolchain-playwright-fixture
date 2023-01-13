@@ -46,4 +46,4 @@ jobs:
           mvn -B release:update-versions -DautoVersionSubmodules=true
           git add pom.xml
           git commit -m "Update version"
-          git push origin master
+          git push origin main
