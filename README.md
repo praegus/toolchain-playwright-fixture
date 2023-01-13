@@ -1,2 +1,4 @@
 # toolchain-playwright-fixture
-Repo for the FitNesse Playwright fixture
+A FitNesse fixture for writing browser tests using the Playwright Java API
+
+
