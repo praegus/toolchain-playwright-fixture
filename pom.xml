@@ -6,9 +6,10 @@
 
     <groupId>nl.praegus</groupId>
     <artifactId>toolchain-playwright-fixture</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
+    <url>https://github.com/praegus/toolchain-playwright-fixture</url>
+    <name>Praegus Toolchain Playwright Fixture</name>
     <description>A FitNesse fixture for writing browser tests using the Playwright Java API</description>
+    <version>1.0-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
