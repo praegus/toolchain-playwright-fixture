@@ -9,13 +9,10 @@
     <url>https://github.com/praegus/toolchain-playwright-fixture</url>
     <name>Praegus Toolchain Playwright Fixture</name>
     <description>A FitNesse fixture for writing browser tests using the Playwright Java API</description>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <playwright.version>1.28.1</playwright.version>
-        <fitnesse.version>20221219</fitnesse.version>
-        <hsac.fixtures.version>5.2.25</hsac.fixtures.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
@@ -24,18 +21,18 @@
         <dependency>
             <groupId>org.fitnesse</groupId>
             <artifactId>fitnesse</artifactId>
-            <version>${fitnesse.version}</version>
+            <version>20221219</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.microsoft.playwright</groupId>
             <artifactId>playwright</artifactId>
-            <version>${playwright.version}</version>
+            <version>1.29.0</version>
         </dependency>
         <dependency>
             <groupId>nl.hsac</groupId>
             <artifactId>hsac-fitnesse-fixtures</artifactId>
-            <version>${hsac.fixtures.version}</version>
+            <version>5.2.25</version>
         </dependency>
     </dependencies>
 
@@ -133,7 +130,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
+                        <version>3.0.1</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
