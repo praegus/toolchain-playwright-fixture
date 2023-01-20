@@ -32,7 +32,7 @@ A FitNesse fixture for writing browser tests using the Playwright Java API.
 |start browser     |chromium          |
 ```
 
-- Start writing tests using the ```plasywright fixture```
+- Start writing tests using the ```playwright fixture```
 
 ```fitnesse
 
