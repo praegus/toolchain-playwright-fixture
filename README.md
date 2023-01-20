@@ -1,6 +1,9 @@
 # toolchain-playwright-fixture
 
-A FitNesse fixture for writing browser tests using the Playwright Java API. 
+A FitNesse fixture for writing browser tests using the [Playwright Java API](https://github.com/microsoft/playwright-java).
+Based on and inspired by the [HSAC fixtures.](https://github.com/fhoeben/hsac-fitnesse-fixtures)
+
+Only a subset of the available Playwright commands is currently implemented in this fixture.
 
 ## Getting started
 
@@ -42,3 +45,6 @@ A FitNesse fixture for writing browser tests using the Playwright Java API.
 |assert that page has url|https://praegus.nl/proof-of-concept-aanvraagformulier/|
 |ensure                  |is visible  |text=Proof of Concept Aanvraagformulier  |
 ```
+
+> The first time the fixture is used Playwright will download the Chromium, Firefox and Webkit browsers from the Microsoft CDN. This may take some time. 
+> If you are behind a firewall or proxy downloading the browsers might be blocked. The Playwright documentation offers the following solution: [Install behind a firewall or a proxy](https://playwright.dev/java/docs/browsers#install-behind-a-firewall-or-a-proxy)
