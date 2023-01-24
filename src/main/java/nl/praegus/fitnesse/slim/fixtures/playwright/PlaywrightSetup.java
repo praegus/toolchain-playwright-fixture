@@ -1,6 +1,7 @@
 package nl.praegus.fitnesse.slim.fixtures.playwright;
 
 import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.ColorScheme;
@@ -8,11 +9,15 @@ import com.microsoft.playwright.options.Proxy;
 import nl.hsac.fitnesse.fixture.slim.SlimFixture;
 import nl.hsac.fitnesse.fixture.slim.SlimFixtureException;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public final class PlaywrightSetup extends SlimFixture {
     private static final Playwright playwright = Playwright.create();
+    private final File harFolder = new File(getEnvironment().getFitNesseFilesSectionDir(), "har");
     private static Browser browser;
     private static BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions();
     private static Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions();
@@ -39,6 +44,11 @@ public final class PlaywrightSetup extends SlimFixture {
             default:
                 throw new SlimFixtureException(false, "Unsupported browser name. Use Chromium, Firefox or Webkit!");
         }
+    }
+
+    public void createHar() {
+        newContextOptions.setRecordHarOmitContent(true);
+        newContextOptions.setRecordHarPath(Paths.get(harFolder + "/harFile.har"));
     }
 
     public void setAcceptDownloads(Boolean acceptDownloads) {
