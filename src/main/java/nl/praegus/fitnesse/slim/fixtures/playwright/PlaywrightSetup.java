@@ -4,6 +4,7 @@ import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.ColorScheme;
+import com.microsoft.playwright.options.Proxy;
 import nl.hsac.fitnesse.fixture.slim.SlimFixture;
 import nl.hsac.fitnesse.fixture.slim.SlimFixtureException;
 
@@ -18,6 +19,10 @@ public final class PlaywrightSetup extends SlimFixture {
 
     public void setHeadless(Boolean headless) {
         launchOptions.setHeadless(headless);
+    }
+
+    public static void configureProxy(String server) {
+        launchOptions.setProxy(new Proxy(server));
     }
 
     public static void startBrowser(String browserName) {
@@ -36,15 +41,15 @@ public final class PlaywrightSetup extends SlimFixture {
         }
     }
 
-    public void setAcceptDownloads(Boolean acceptDownloads){
+    public void setAcceptDownloads(Boolean acceptDownloads) {
         newContextOptions.setAcceptDownloads(acceptDownloads);
     }
 
-    public void setBypassCSP(Boolean bypassCSP){
+    public void setBypassCSP(Boolean bypassCSP) {
         newContextOptions.setBypassCSP(bypassCSP);
     }
 
-    public void setColorScheme(String colorScheme){
+    public void setColorScheme(String colorScheme) {
         newContextOptions.setColorScheme(ColorScheme.valueOf(colorScheme.toUpperCase()));
     }
 
@@ -52,16 +57,16 @@ public final class PlaywrightSetup extends SlimFixture {
         newContextOptions.setExtraHTTPHeaders(extraHTTPHeaders);
     }
 
-    public void setBaseUrl(String baseUrl){
+    public void setBaseUrl(String baseUrl) {
         newContextOptions.setBaseURL(baseUrl);
     }
 
-    public static void setDeviceScaleFactor(int scaleFactor){
+    public static void setDeviceScaleFactor(int scaleFactor) {
         newContextOptions.setDeviceScaleFactor(scaleFactor);
     }
 
-    public static void setViewportWidthAndHeight(int width, int height){
-        newContextOptions.setViewportSize(width,height);
+    public static void setViewportWidthAndHeight(int width, int height) {
+        newContextOptions.setViewportSize(width, height);
     }
 
     public static Browser.NewContextOptions getNewContextOptions() {
