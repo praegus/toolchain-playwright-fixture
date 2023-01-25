@@ -13,7 +13,7 @@ Only a subset of the available Playwright commands is currently implemented in t
 <dependency>
     <groupId>nl.praegus</groupId>
     <artifactId>toolchain-playwright-fixture</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
