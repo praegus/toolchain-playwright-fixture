@@ -7,12 +7,10 @@ import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.SelectOption;
 import com.microsoft.playwright.options.WaitForSelectorState;
-import nl.hsac.fitnesse.fixture.slim.SlimFixture;
-import nl.hsac.fitnesse.fixture.slim.SlimFixtureException;
+import org.apache.commons.text.StringEscapeUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
@@ -20,26 +18,28 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static fitnesse.slim.SlimVersion.PRETTY_PRINT_TAG_END;
+import static fitnesse.slim.SlimVersion.PRETTY_PRINT_TAG_START;
 
-public class PlaywrightFixture extends SlimFixture {
+public class PlaywrightFixture extends SlimFixtureBase {
     private final Browser browser = PlaywrightSetup.getBrowser();
     private final CookieManager cookieManager = new CookieManager();
-    private final File screenshotFolder = new File(getEnvironment().getFitNesseFilesSectionDir(), "screenshots");
-    private final File tracesFolder = new File(getEnvironment().getFitNesseFilesSectionDir(), "traces");
-    private final File storageStateFolder = new File(getEnvironment().getFitNesseFilesSectionDir(), "storage-states");
+    private final Path screenshotsDir = wikiFilesDir.resolve("screenshots");
+    private final Path tracesDir = wikiFilesDir.resolve("traces");
+    private final Path storageStateDir = wikiFilesDir.resolve("storage-states");
     private BrowserContext browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions());
     private Page currentPage = browserContext.newPage();
     private String storageState;
     private Double timeout;
 
     //Utility
-    public static Double toMilliSeconds(Integer timeoutInSeconds) {
+    private static Double toMilliSeconds(Integer timeoutInSeconds) {
         return (double) timeoutInSeconds * 1000;
     }
 
-    public BrowserContext getBrowserContext() {
-        return browserContext;
-    }
+//    public BrowserContext getBrowserContext() {
+//        return browserContext;
+//    }
 
     private Locator getLocator(String selector, Page.LocatorOptions locatorOptions) {
         return currentPage.locator(selector, locatorOptions);
@@ -286,7 +286,7 @@ public class PlaywrightFixture extends SlimFixture {
         assertThat(currentPage).not().hasURL(Pattern.compile(url));
     }
 
-    public void assertThatPageHasNotUrlWithTimeout(String url, double timeout){
+    public void assertThatPageHasNotUrlWithTimeout(String url, double timeout) {
         assertThat(currentPage).not().hasURL(Pattern.compile(url), new PageAssertions.HasURLOptions().setTimeout(timeout));
     }
 
@@ -358,11 +358,24 @@ public class PlaywrightFixture extends SlimFixture {
 
     //Taking screenshots
     public String takeScreenshot(String baseName) {
-        var screenshotFile = new File(screenshotFolder, baseName + ".png");
-        currentPage.screenshot(new Page.ScreenshotOptions().setPath(screenshotFile.toPath()).setFullPage(true));
+        var screenshotFile = screenshotsDir.resolve(baseName);
+        currentPage.screenshot(new Page.ScreenshotOptions().setPath(screenshotFile).setFullPage(true));
+        return getScreenshotLink(screenshotFile);
+    }
 
-        return String.format("<a href=\"%1$s\" target=\"_blank\"><img src=\"%1$s\" title=\"%2$s\" height=\"%3$s\"/></a>",
-                getWikiUrl(screenshotFile.getAbsolutePath()), baseName, 200);
+    private String getScreenshotLink(Path screenshotFile) {
+        return String.format("<a href=\"%1$s\" target=\"_blank\" style=\"border-style:none\"><img src=\"%1$s\" title=\"%2$s\" height=\"%3$s\" style=\"border-style:none\"/></a>",
+                getWikiPath(screenshotFile), screenshotFile.getFileName(), 400);
+    }
+
+    /**
+     * Converts a file path into a relative wiki path, if the path is insides the wiki's 'files' section.
+     *
+     * @param path path to file.
+     * @return relative URL pointing to the file (so a hyperlink to it can be created).
+     */
+    public Path getWikiPath(Path path) {
+        return path.startsWith(wikiFilesDir) ? path.subpath(1, (path.getNameCount())) : path;
     }
 
     //Debugging
@@ -402,7 +415,7 @@ public class PlaywrightFixture extends SlimFixture {
     }
 
     public void saveStorageStateToFile(String name) {
-        browserContext.storageState(new BrowserContext.StorageStateOptions().setPath(Paths.get(storageStateFolder + "/" + name + ".json")));
+        browserContext.storageState(new BrowserContext.StorageStateOptions().setPath(Paths.get(storageStateDir + "/" + name + ".json")));
     }
 
     public String getStorageState() {
@@ -416,9 +429,9 @@ public class PlaywrightFixture extends SlimFixture {
 
     public void openNewContextWithSavedStorageStateFromFile(String name) {
         try {
-            browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions().setStorageStatePath(Paths.get(storageStateFolder + "/" + name + ".json")));
+            browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions().setStorageStatePath(Paths.get(storageStateDir + "/" + name + ".json")));
         } catch (Exception e) {
-            throw new SlimFixtureException(e.getMessage());
+            throw new PlaywrightFitnesseException(e.getMessage());
         }
     }
 
@@ -428,11 +441,11 @@ public class PlaywrightFixture extends SlimFixture {
     }
 
     public void saveTrace(String name) {
-        browserContext.tracing().stop(new Tracing.StopOptions().setPath(Paths.get(tracesFolder + "/" + name + ".zip")));
+        browserContext.tracing().stop(new Tracing.StopOptions().setPath(Paths.get(tracesDir + "/" + name + ".zip")));
     }
 
     public void openTrace(String name) throws IOException, InterruptedException {
-        String[] args = {"show-trace", tracesFolder + "/" + name + ".zip"};
+        String[] args = {"show-trace", tracesDir + "/" + name + ".zip"};
         CLI.main(args);
     }
 
@@ -473,14 +486,12 @@ public class PlaywrightFixture extends SlimFixture {
     }
 
     @Override
-    protected Throwable handleException(Method method, Object[] arguments, Throwable t) {
-        if (t instanceof PlaywrightException) {
-            t = new SlimFixtureException(false, getSlimFixtureExceptionMessageWithScreenshot(t));
-        }
-        return t;
+    protected Throwable handleException(Throwable t) {
+        return (currentPage == null || browserContext == null) ? t : new PlaywrightFitnesseException(getExceptionMessageWithScreenshot(t));
     }
 
-    protected String getSlimFixtureExceptionMessageWithScreenshot(Throwable t) {
-        return String.format("<div>%s</div><div>%s</div>", t.getMessage(), takeScreenshot());
+    protected String getExceptionMessageWithScreenshot(Throwable t) {
+        return String.format("%s<div style=\"border-style:none\"><p style=\"border-style:none\" >%s</p>%s</div>%s",
+                PRETTY_PRINT_TAG_START, StringEscapeUtils.escapeHtml4(t.getMessage()), takeScreenshot(), PRETTY_PRINT_TAG_END);
     }
 }

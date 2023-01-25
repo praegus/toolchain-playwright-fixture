@@ -27,11 +27,6 @@
             <artifactId>playwright</artifactId>
             <version>1.29.0</version>
         </dependency>
-        <dependency>
-            <groupId>nl.hsac</groupId>
-            <artifactId>hsac-fitnesse-fixtures</artifactId>
-            <version>5.2.25</version>
-        </dependency>
     </dependencies>
 
     <packaging>jar</packaging>
