@@ -37,10 +37,6 @@ public class PlaywrightFixture extends SlimFixtureBase {
         return (double) timeoutInSeconds * 1000;
     }
 
-//    public BrowserContext getBrowserContext() {
-//        return browserContext;
-//    }
-
     private Locator getLocator(String selector, Page.LocatorOptions locatorOptions) {
         return currentPage.locator(selector, locatorOptions);
     }
