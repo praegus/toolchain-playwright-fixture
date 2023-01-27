@@ -1,30 +1,21 @@
 package nl.praegus.fitnesse.slim.fixtures.playwright;
 
 import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.ColorScheme;
 import com.microsoft.playwright.options.Proxy;
-import nl.hsac.fitnesse.fixture.slim.SlimFixture;
-import nl.hsac.fitnesse.fixture.slim.SlimFixtureException;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
-public final class PlaywrightSetup extends SlimFixture {
+public final class PlaywrightSetup extends SlimFixtureBase {
     private static final Playwright playwright = Playwright.create();
-    private final File harFolder = new File(getEnvironment().getFitNesseFilesSectionDir(), "har");
     private static Browser browser;
-    private static BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions();
-    private static Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions();
-
-    public void setHeadless(Boolean headless) {
-        launchOptions.setHeadless(headless);
-    }
+    private static final BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions();
+    private static final Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions();
+    private final Path harDir = wikiFilesDir.resolve("har");
 
     public static void configureProxy(String server) {
         launchOptions.setProxy(new Proxy(server));
@@ -33,7 +24,7 @@ public final class PlaywrightSetup extends SlimFixture {
     public static void startBrowser(String browserName) {
         switch (browserName.toLowerCase()) {
             case "chromium":
-                browser = playwright.chromium().launch(launchOptions.setArgs(List.of("--disable-dev-shm-usage")));
+                browser = playwright.chromium().launch(launchOptions);
                 break;
             case "firefox":
                 browser = playwright.firefox().launch(launchOptions);
@@ -42,13 +33,37 @@ public final class PlaywrightSetup extends SlimFixture {
                 browser = playwright.webkit().launch(launchOptions);
                 break;
             default:
-                throw new SlimFixtureException(false, "Unsupported browser name. Use Chromium, Firefox or Webkit!");
+                throw new PlaywrightFitnesseException("Unsupported browser name. Use Chromium, Firefox or Webkit!");
         }
     }
 
-    public void createHar() {
+    public static void setDeviceScaleFactor(int scaleFactor) {
+        newContextOptions.setDeviceScaleFactor(scaleFactor);
+    }
+
+    public static void setViewportWidthAndHeight(int width, int height) {
+        newContextOptions.setViewportSize(width, height);
+    }
+
+    public static Browser.NewContextOptions getNewContextOptions() {
+        return newContextOptions;
+    }
+
+    public static Browser getBrowser() {
+        return browser;
+    }
+
+    public void setHeadless(Boolean headless) {
+        launchOptions.setHeadless(headless);
+    }
+
+    public void createHarWithName(String harName) {
         newContextOptions.setRecordHarOmitContent(true);
-        newContextOptions.setRecordHarPath(Paths.get(harFolder + "/harFile.har"));
+        newContextOptions.setRecordHarPath(Paths.get(harDir + "/" + harName + ".har"));
+    }
+
+    public void createHar() {
+        createHarWithName("harFile");
     }
 
     public void setAcceptDownloads(Boolean acceptDownloads) {
@@ -69,22 +84,6 @@ public final class PlaywrightSetup extends SlimFixture {
 
     public void setBaseUrl(String baseUrl) {
         newContextOptions.setBaseURL(baseUrl);
-    }
-
-    public static void setDeviceScaleFactor(int scaleFactor) {
-        newContextOptions.setDeviceScaleFactor(scaleFactor);
-    }
-
-    public static void setViewportWidthAndHeight(int width, int height) {
-        newContextOptions.setViewportSize(width, height);
-    }
-
-    public static Browser.NewContextOptions getNewContextOptions() {
-        return newContextOptions;
-    }
-
-    public static Browser getBrowser() {
-        return browser;
     }
 
     public void closeBrowser() {

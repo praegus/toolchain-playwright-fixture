@@ -1,19 +1,22 @@
-# toolchain-playwright-fixture
+# ![Praegus_logo](https://avatars.githubusercontent.com/u/53261849?s=25&v=4) Praegus Toolchain Playwright Fixture
+
+[![maven version](https://img.shields.io/maven-central/v/nl.praegus/toolchain-playwright-fixture)](https://search.maven.org/search?q=nl.praegus/toolchain-playwright-fixture)
 
 A FitNesse fixture for writing browser tests using the [Playwright Java API](https://github.com/microsoft/playwright-java).
 Based on and inspired by the [HSAC fixtures.](https://github.com/fhoeben/hsac-fitnesse-fixtures)
 
 Only a subset of the available Playwright commands is currently implemented in this fixture.
 
-## Getting started
+This fixture requires **Java 11** or newer
 
-- Add the fixture as dependency to your FitNesse project.
+## Getting started
+- Add the fixture as Maven dependency to your FitNesse project.
 
 ```xml
 <dependency>
     <groupId>nl.praegus</groupId>
     <artifactId>toolchain-playwright-fixture</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
@@ -29,10 +32,10 @@ Only a subset of the available Playwright commands is currently implemented in t
 - To configure and start a browser, use the ```playwright setup``` fixture.
 
 ```fitnesse
-|script            |playwright setup  |
-|set headless      |false             |
+|script            |playwright setup    |
+|set headless      |false               |
 |set viewport width|1920|and height|1080|
-|start browser     |chromium          |
+|start browser     |chromium            |
 ```
 
 - Start writing tests using the ```playwright fixture```
