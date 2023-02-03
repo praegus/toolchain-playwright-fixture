@@ -53,8 +53,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
 
     //Page management
     public void openNewContext() {
-        browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions());
-        browserContext.addCookies(CookieJar.getCookies());
+        browserContext = browser.newContext();
     }
 
     public void closePage() {
