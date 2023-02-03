@@ -15,7 +15,7 @@ public final class PlaywrightSetup extends SlimFixtureBase {
     private static Browser browser;
     private static final BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions();
     private static final Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions();
-    private final Path harDir = wikiFilesDir.resolve("har");
+    private final Path harDir = getWikiFilesDir().resolve("har");
 
     public static void configureProxy(String server) {
         launchOptions.setProxy(new Proxy(server));
