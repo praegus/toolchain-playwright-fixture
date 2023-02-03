@@ -24,19 +24,15 @@ import static fitnesse.slim.SlimVersion.PRETTY_PRINT_TAG_START;
 public class PlaywrightFixture extends SlimFixtureBase {
     private final Browser browser = PlaywrightSetup.getBrowser();
     private final CookieManager cookieManager = new CookieManager();
-    private final Path screenshotsDir = wikiFilesDir.resolve("screenshots");
-    private final Path tracesDir = wikiFilesDir.resolve("traces");
-    private final Path storageStateDir = wikiFilesDir.resolve("storage-states");
+    private final Path screenshotsDir = getWikiFilesDir().resolve("screenshots");
+    private final Path tracesDir = getWikiFilesDir().resolve("traces");
+    private final Path storageStateDir = getWikiFilesDir().resolve("storage-states");
     private BrowserContext browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions());
     private Page currentPage = browserContext.newPage();
     private String storageState;
     private Double timeout;
 
     //Utility
-    private static Double toMilliSeconds(Integer timeoutInSeconds) {
-        return (double) timeoutInSeconds * 1000;
-    }
-
     private Locator getLocator(String selector, Page.LocatorOptions locatorOptions) {
         return currentPage.locator(selector, locatorOptions);
     }
@@ -57,7 +53,8 @@ public class PlaywrightFixture extends SlimFixtureBase {
 
     //Page management
     public void openNewContext() {
-        browserContext = browser.newContext();
+        browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions());
+        browserContext.addCookies(CookieJar.getCookies());
     }
 
     public void closePage() {
@@ -371,7 +368,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @return relative URL pointing to the file (so a hyperlink to it can be created).
      */
     public Path getWikiPath(Path path) {
-        return path.startsWith(wikiFilesDir) ? path.subpath(1, (path.getNameCount())) : path;
+        return path.startsWith(getWikiFilesDir()) ? path.subpath(1, (path.getNameCount())) : path;
     }
 
     //Debugging
