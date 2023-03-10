@@ -1,0 +1,19 @@
+# Please see the documentation for all configuration options:
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/" # Location of pom.xml
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "06:00"
+      timezone: "Europe/Amsterdam"
+   allow:
+      - dependency-name: "com.microsoft.playwright:playwright"
+   ignore:
+      - dependency-name: "org.fitnesse:fitnesse"
+   assignees:
+      - "joroelev"
+    
