@@ -44,7 +44,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Sets the timeout for the current browser context.
      *
-     * @param timeoutInMilliseconds
+     * @param timeoutInMilliseconds set default timeout for current and new browser contexts in milliseconds
      */
     public void setTimeout(Double timeoutInMilliseconds) {
         timeout = timeoutInMilliseconds;
@@ -91,12 +91,6 @@ public class PlaywrightFixture extends SlimFixtureBase {
         browserContext.pages().get(tabToCloseIndex).close();
     }
 
-    /**
-     * Returns index of given Page in Pages list of given BrowserContext. Returns -1 if not found.
-     *
-     * @param page
-     * @return
-     */
     private Integer getPageIndex(Page page) {
         return browserContext.pages().indexOf(page);
     }
@@ -136,7 +130,10 @@ public class PlaywrightFixture extends SlimFixtureBase {
         currentPage.reload();
     }
 
-    //User page interaction
+
+    //    User page interaction
+
+    //    Clicking
     public void click(String selector) {
         getLocator(selector).click();
     }
@@ -178,8 +175,13 @@ public class PlaywrightFixture extends SlimFixtureBase {
         getLocator(selector).selectOption(new SelectOption().setIndex(index));
     }
 
+    // Check checkbox or radio button
     public void selectCheckbox(String selector) {
         getLocator(selector).check();
+    }
+
+    public void deselectCheckbox(String selector) {
+        getLocator(selector).uncheck();
     }
 
     public void forceSelectCheckbox(String selector) {
