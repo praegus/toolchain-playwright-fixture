@@ -1,57 +1,71 @@
 package nl.praegus.fitnesse.slim.fixtures.playwright;
 
-import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.options.Cookie;
-import com.microsoft.playwright.options.SameSiteAttribute;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import nl.praegus.fitnesse.slim.fixtures.playwright.converters.CookieConverter;
 
 public class CookieManager {
+    private String key;
+    private String name;
+    private String value;
+    private String domain;
+    private String path;
+    private String expires;
+    private Boolean httpOnly = false;
+    private Boolean secure = false;
+    private String sameSite;
 
-    public void setCookie(Map<String, String> cookieMap, BrowserContext browserContext) {
-        List<Cookie> cookies = new ArrayList<>();
-        var cookie = new Cookie(cookieMap.get("name"), cookieMap.get("value"));
+    private final CookieConverter converter;
 
-        if (cookieMap.get("domain") != null) {
-            cookie.setDomain(cookieMap.get("domain"))
-                    .setPath(cookieMap.getOrDefault("path", "/"));
-        } else  {
-            cookie.setUrl(cookieMap.get("url"));
-        }
-
-        cookie.setExpires(timestampToEpoch(cookieMap.getOrDefault("expiry", "2080-11-15 21:12")))
-                .setSecure(Boolean.parseBoolean(cookieMap.getOrDefault("secure", "false")))
-                .setHttpOnly(Boolean.parseBoolean(cookieMap.getOrDefault("httpOnly", "false")))
-                .setSameSite(SameSiteAttribute.valueOf(cookieMap.getOrDefault("sameSite", "NONE")));
-        cookies.add(cookie);
-        browserContext.addCookies(cookies);
+    public CookieManager() {
+        fitnesse.slim.converters.ConverterRegistry.addConverter(Cookie.class, new CookieConverter());
+        converter = (CookieConverter) fitnesse.slim.converters.ConverterRegistry.getConverterForClass(Cookie.class);
     }
 
-    public void setCookies(List<Map<String, String>> cookiesList, BrowserContext browserContext) {
-        cookiesList.stream().forEach(cookie -> setCookie(cookie, browserContext));
+    public void setKey(String key) {
+        this.key = key;
     }
 
-    Map<String, String> getCookies(BrowserContext browserContext) {
-        Map<String, String> cookieStrings = new HashMap<>();
-        browserContext.cookies().forEach(cookie -> cookieStrings.put(cookie.name, this.formatCookieString(cookie)));
-        return cookieStrings;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void deleteCookies(BrowserContext browserContext) {
-        browserContext.clearCookies();
+    public void setValue(String value) {
+        this.value = value;
     }
 
-    private double timestampToEpoch(String timestamp) {
-        return LocalDateTime.parse(timestamp, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")).toEpochSecond(ZoneOffset.UTC);
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
-    private String formatCookieString(Cookie cookie) {
-        return String.format("%s;%s;%s;%s;%s", cookie.value, cookie.expires, cookie.secure, cookie.httpOnly, cookie.sameSite);
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public void setExpires(String expires) {
+        this.expires = expires;
+    }
+
+    public void setHttpOnly(Boolean httpOnly) {
+        this.httpOnly = httpOnly;
+    }
+
+    public void setSecure(Boolean secure) {
+        this.secure = secure;
+    }
+
+    public void setSameSite(String sameSite) {
+        this.sameSite = sameSite;
+    }
+
+    public void execute() {
+            CookieJar.addCookie(key, converter.getObject(this.toString()));
+    }
+    public Cookie cookie() {
+        return converter.getObject(this.toString());
+    }
+
+    public String toString() {
+        return String.format("name=%s;value=%s;domain=%s;path=%s;expires=%s;secure=%s;httpOnly=%s;sameSite=%s",
+                name, value, domain, path, expires, secure, httpOnly, sameSite);
     }
 }

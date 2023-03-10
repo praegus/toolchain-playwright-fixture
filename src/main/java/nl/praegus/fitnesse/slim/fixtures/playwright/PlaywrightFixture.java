@@ -3,18 +3,15 @@ package nl.praegus.fitnesse.slim.fixtures.playwright;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.assertions.LocatorAssertions;
 import com.microsoft.playwright.assertions.PageAssertions;
-import com.microsoft.playwright.options.AriaRole;
-import com.microsoft.playwright.options.LoadState;
-import com.microsoft.playwright.options.SelectOption;
-import com.microsoft.playwright.options.WaitForSelectorState;
+import com.microsoft.playwright.options.*;
 import org.apache.commons.text.StringEscapeUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -23,14 +20,18 @@ import static fitnesse.slim.SlimVersion.PRETTY_PRINT_TAG_START;
 
 public class PlaywrightFixture extends SlimFixtureBase {
     private final Browser browser = PlaywrightSetup.getBrowser();
-    private final CookieManager cookieManager = new CookieManager();
     private final Path screenshotsDir = getWikiFilesDir().resolve("screenshots");
     private final Path tracesDir = getWikiFilesDir().resolve("traces");
     private final Path storageStateDir = getWikiFilesDir().resolve("storage-states");
-    private BrowserContext browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions());
-    private Page currentPage = browserContext.newPage();
+    private BrowserContext browserContext;
+    private Page currentPage;
     private String storageState;
     private Double timeout;
+
+    public PlaywrightFixture() {
+        this.browserContext =  browser.newContext(PlaywrightSetup.getNewContextOptions());
+        this.currentPage = browserContext.newPage();
+    }
 
     //Utility
     private Locator getLocator(String selector, Page.LocatorOptions locatorOptions) {
@@ -53,7 +54,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
 
     //Page management
     public void openNewContext() {
-        browserContext = browser.newContext();
+        browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions());
     }
 
     public void closePage() {
@@ -96,20 +97,16 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     //Cookie management
-    public void setCookie(Map<String, String> cookieMap) {
-        cookieManager.setCookie(cookieMap, browserContext);
+    public void addCookie(String cookieKey) {
+        browserContext.addCookies(Arrays.asList(CookieJar.getCookie(cookieKey)));
     }
 
-    public Map<String, String> getCookies() {
-        return cookieManager.getCookies(browserContext);
-    }
-
-    public void setCookies(List<Map<String, String>> cookiesList) {
-        cookieManager.setCookies(cookiesList, browserContext);
+    public List<Cookie> getCookies() {
+      return browserContext.cookies();
     }
 
     public void deleteCookies() {
-        cookieManager.deleteCookies(browserContext);
+        browserContext.clearCookies();
     }
 
     //Navigation
