@@ -155,18 +155,17 @@ public class PlaywrightFixture extends SlimFixtureBase {
         }
     }
 
-    public void clickAndWaitForNavigation(String selector) {
-        currentPage.waitForNavigation(() -> this.click(selector));
-    }
 
     public void doubleClick(String selector) {
         getLocator(selector).dblclick();
     }
 
+    // Fill input
     public void enterInto(String value, String selector) {
         getLocator(selector).fill(value);
     }
 
+    // Select options
     public void selectLabelIn(String value, String selector) {
         getLocator(selector).selectOption(new SelectOption().setLabel(value));
     }
