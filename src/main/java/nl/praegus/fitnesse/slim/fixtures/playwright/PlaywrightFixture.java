@@ -386,22 +386,6 @@ public class PlaywrightFixture extends SlimFixtureBase {
         currentPage.pause();
     }
 
-    public String getCurrentPage() {
-        return currentPage.toString();
-    }
-
-    public String getPages() {
-        return browserContext.pages().toString();
-    }
-
-    public String getContexts() {
-        return browser.contexts().toString();
-    }
-
-    public String getCurrentContext() {
-        return browserContext.toString();
-    }
-
     //Manage re-usable state
     public void saveStorageState() {
         storageState = browserContext.storageState();
