@@ -21,6 +21,11 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 import static fitnesse.slim.SlimVersion.PRETTY_PRINT_TAG_END;
 import static fitnesse.slim.SlimVersion.PRETTY_PRINT_TAG_START;
 
+/**
+ * FitNesse fixture enabling the use of the java-playwright api for browser automation
+ *
+ * <p> <a href="https://playwright.dev/java/">Playwright Java documentation</a>.
+ */
 public class PlaywrightFixture extends SlimFixtureBase {
     private final Browser browser = PlaywrightSetup.getBrowser();
     private final CookieManager cookieManager = new CookieManager();
@@ -32,19 +37,10 @@ public class PlaywrightFixture extends SlimFixtureBase {
     private String storageState;
     private Double timeout;
 
-    //Utility
-    private Locator getLocator(String selector, Page.LocatorOptions locatorOptions) {
-        return currentPage.locator(selector, locatorOptions);
-    }
-
-    private Locator getLocator(String selector) {
-        return currentPage.locator(selector);
-    }
-
     /**
      * Sets the timeout for the current browser context.
      *
-     * @param timeoutInMilliseconds
+     * @param timeoutInMilliseconds the timeout in milliseconds.
      */
     public void setTimeout(Double timeoutInMilliseconds) {
         timeout = timeoutInMilliseconds;
@@ -52,53 +48,90 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     //Page management
+    /**
+     * Opens a new browser context
+     */
     public void openNewContext() {
         browserContext = browser.newContext();
     }
 
+    /**
+     * Closes current page
+     */
     public void closePage() {
         currentPage.close();
     }
 
+    /**
+     * Closes current brower context
+     */
     public void closeContext() {
         browserContext.close();
     }
 
+    /**
+     * Sets accept handler for next dialog. So when a browser dialog appears it will be automatically accepted.
+     */
     public void acceptNextDialog() {
         currentPage.onceDialog(Dialog::accept);
     }
 
     //     Tab management
+
+    /**
+     * Switches to next tab.
+     *
+     * @throws PlaywrightFitnesseException when no next tab is found
+     */
     public void switchToNextTab() {
-        currentPage = browserContext.pages().get(getPageIndex(currentPage) + 1);
-        currentPage.bringToFront();
-    }
-
-    public void switchToPreviousTab() {
-        int currentPageIndex = getPageIndex(currentPage);
-        currentPage = currentPageIndex > 0 ? browserContext.pages().get(currentPageIndex - 1) : currentPage;
-        currentPage.bringToFront();
-    }
-
-    public void closeCurrentTab() {
-        var tabToCloseIndex = getPageIndex(currentPage);
-        switchToPreviousTab();
-        browserContext.pages().get(tabToCloseIndex).close();
-    }
-
-    public void closeNextTab() {
-        var tabToCloseIndex = (getPageIndex(currentPage) + 1);
-        browserContext.pages().get(tabToCloseIndex).close();
+        if (isLastPage(currentPage)) {
+            throw new PlaywrightFitnesseException("Exception: Next tab not found.");
+        }
+        currentPage = getPageList().get(getPageIndex(currentPage) + 1);
     }
 
     /**
-     * Returns index of given Page in Pages list of given BrowserContext. Returns -1 if not found.
-     *
-     * @param page
-     * @return
+     * @deprecated renamed. {@link PlaywrightFixture#switchToPrecedingTab()}
+     * @since v1.3.3
      */
-    private Integer getPageIndex(Page page) {
-        return browserContext.pages().indexOf(page);
+    public void switchToPreviousTab() {
+        switchToPrecedingTab();
+    }
+
+    /**
+     * Switches to preceding tab.
+     *
+     * @throws PlaywrightFitnesseException when no preceding tab is found
+     */
+    public void switchToPrecedingTab() {
+        if (isFirstPage(currentPage)) {
+            throw new PlaywrightFitnesseException("Exception: preceding tab not found.");
+        }
+        currentPage = getPageList().get(getPageIndex(currentPage) - 1);
+    }
+
+    /**
+     * @deprecated unneeded convenience method. Use {@link PlaywrightFixture#switchToPrecedingTab} and
+     * {@link PlaywrightFixture#closeNextTab()} instead.
+     * Also works only when a previous tab is present.
+     * @since 1.3.3
+     */
+    public void closeCurrentTab() {
+        var tabToCloseIndex = getPageIndex(currentPage);
+        switchToPreviousTab();
+        getPageList().get(tabToCloseIndex).close();
+    }
+
+    /**
+     * Closes the next tab
+     *
+     * @throws PlaywrightFitnesseException if no next page is present
+     */
+    public void closeNextTab() {
+        if (isLastPage(currentPage)) {
+            throw new PlaywrightFitnesseException("Exception: no next tab found");
+        }
+        getPageList().get(getPageIndex(currentPage) + 1).close();
     }
 
     //Cookie management
@@ -155,6 +188,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
         }
     }
 
+    @Deprecated(since = "1.3.3")
     public void clickAndWaitForNavigation(String selector) {
         currentPage.waitForNavigation(() -> this.click(selector));
     }
@@ -348,6 +382,15 @@ public class PlaywrightFixture extends SlimFixtureBase {
         return currentPage.url();
     }
 
+    /**
+     * Returns a string containing the page title
+     *
+     * @return the page title of the current page
+     */
+    public String getTitle() {
+        return currentPage.title();
+    }
+
     //Taking screenshots
     public String takeScreenshot(String baseName) {
         var screenshotFile = screenshotsDir.resolve(baseName);
@@ -390,7 +433,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     public String getPages() {
-        return browserContext.pages().toString();
+        return getPageList().toString();
     }
 
     public String getContexts() {
@@ -476,6 +519,70 @@ public class PlaywrightFixture extends SlimFixtureBase {
     public void setUrlToReturnBody(String url, String body) {
         browserContext.route(url, route -> route.fulfill(new Route.FulfillOptions().setBody(body)));
     }
+
+    //Helper methods
+
+    /**
+     * Helper function returning a Locator object based on a selector string and an locationOptions object.
+     *
+     * @param selector       playwright selector string
+     * @param locatorOptions playwright locator options
+     * @return locator of an element on the current page
+     */
+    private Locator getLocator(String selector, Page.LocatorOptions locatorOptions) {
+        return currentPage.locator(selector, locatorOptions);
+    }
+
+    /**
+     * Helper function returning a Locator object based on a selector string.
+     *
+     * @param selector playwright selector string
+     * @return locator of an element on the current page
+     */
+    private Locator getLocator(String selector) {
+        return currentPage.locator(selector);
+    }
+
+    /**
+     * Helper function to get the list of pages present in current browser context.
+     *
+     * @return list of pages in current browser context
+     */
+    private List<Page> getPageList() {
+        return browserContext.pages();
+    }
+
+    /**
+     * Returns index of given Page in Pages list of given BrowserContext.
+     *
+     * @param page page object. Assumed is that this page is present in the pages list on current browser context
+     *             {@link PlaywrightFixture#getPageList()}}
+     * @return index of the given page in the list of pages on current browser context. Returns -1 if not found.
+     */
+    private Integer getPageIndex(Page page) {
+        return getPageList().indexOf(page);
+    }
+
+    /**
+     * Indicates if page is the first page in list of page of current browser context
+     *
+     * @param page page to check
+     * @return true when given page is first page in browser contexts pages list
+     */
+    private boolean isFirstPage(Page page) {
+        return getPageIndex(page) == 0;
+    }
+
+    /**
+     * Indicaties if the given page is the last page in the list of pages for the current browser context.
+     *
+     * @param page page to check
+     * @return boolean true is the page is the last in the list of pages for the current browser context
+     */
+    private boolean isLastPage(Page page) {
+        return getPageIndex(page) == getPageList().size() - 1;
+    }
+
 
     @Override
     protected Throwable handleException(Throwable t) {
