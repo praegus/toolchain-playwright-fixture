@@ -15,5 +15,4 @@ updates:
    ignore:
       - dependency-name: "org.fitnesse:fitnesse"
    assignees:
-      - "joroelev"
-    
+      - "joroelev"    
