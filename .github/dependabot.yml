@@ -8,11 +8,11 @@ updates:
     schedule:
       interval: "weekly"
       day: "friday"
-      time: "06:00"
+      time: "9:45"
       timezone: "Europe/Amsterdam"
-   allow:
+    allow:
       - dependency-name: "com.microsoft.playwright:playwright"
-   ignore:
+    ignore:
       - dependency-name: "org.fitnesse:fitnesse"
-   assignees:
-      - "joroelev"    
+    assignees:
+      - "joroelev"
