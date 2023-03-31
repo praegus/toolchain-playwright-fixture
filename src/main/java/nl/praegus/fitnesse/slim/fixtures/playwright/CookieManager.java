@@ -25,7 +25,7 @@ public class CookieManager {
             cookie.setUrl(cookieMap.get("url"));
         }
 
-        cookie.setExpires(timestampToEpoch(cookieMap.getOrDefault("expiry", "2080-11-15 21:12")))
+        cookie.setExpires(timestampToEpoch(cookieMap.getOrDefault("expires", "2080-11-15 21:12")))
                 .setSecure(Boolean.parseBoolean(cookieMap.getOrDefault("secure", "false")))
                 .setHttpOnly(Boolean.parseBoolean(cookieMap.getOrDefault("httpOnly", "false")))
                 .setSameSite(SameSiteAttribute.valueOf(cookieMap.getOrDefault("sameSite", "NONE")));
