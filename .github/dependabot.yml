@@ -8,7 +8,7 @@ updates:
     schedule:
       interval: "weekly"
       day: "friday"
-      time: "9:45"
+      time: "09:45"
       timezone: "Europe/Amsterdam"
     allow:
       - dependency-name: "com.microsoft.playwright:playwright"
