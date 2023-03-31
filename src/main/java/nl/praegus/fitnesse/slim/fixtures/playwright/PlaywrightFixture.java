@@ -64,7 +64,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     /**
-     * Closes current brower context
+     * Closes current browser context
      */
     public void closeContext() {
         browserContext.close();
@@ -145,7 +145,6 @@ public class PlaywrightFixture extends SlimFixtureBase {
      *
      * @param cookieMap map of cookie key values. The cookie can be created in FitNesse by using the HSAC fixtures
      *                  Map fixture as show below.
-     *
      *
      * <p>
      * <pre>
@@ -236,19 +235,43 @@ public class PlaywrightFixture extends SlimFixtureBase {
         currentPage.reload();
     }
 
+
     //User page interaction
+
+    /**
+     * Clicks on an element
+     * @param selector playwright selector to locate element to click on.
+     */
     public void click(String selector) {
         getLocator(selector).click();
     }
 
+    /**
+     * Click on an element located by ARIA role and accessible name.
+     *
+     * @param role ARIA role
+     * @param name ARIA accessible name
+     */
     public void clickRoleWithName(String role, String name) {
         currentPage.getByRole(AriaRole.valueOf(role.toUpperCase()), new Page.GetByRoleOptions().setName(name)).click();
     }
 
+    /**
+     * Click on element with given text.
+     *
+     * @param selector playwright selector to locate element to click on
+     * @param text (sub)string required to be present in the element or one of its children.
+     */
     public void clickWithText(String selector, String text) {
         getLocator(selector, new Page.LocatorOptions().setHasText(text)).click();
     }
 
+    /**
+     * Click on an element the given amount of times.
+     *
+     * @param times number of times to click
+     * @param selector playwright selector to locate element to click on
+     */
     public void clickTimes(int times, String selector) {
         for (int i = 0; i < times; i++) {
             this.click(selector);
@@ -256,44 +279,87 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     /**
-     * Clicks an element and then waits for navigation to complete
+     * Clicks an element and then waits for navigation to complete. Useful to click e.g. steppers.
      *
      * @deprecated use assertions after clicking an element to check if the expected navigation has been completed.
-     * @param selector playwright selector of element to click on
+     * @param selector playwright selector to locate element to click on
      */
     @Deprecated(since = "1.4.0")
     public void clickAndWaitForNavigation(String selector) {
         currentPage.waitForNavigation(() -> this.click(selector));
     }
 
+    /**
+     * Double-click on given element.
+     *
+     * @param selector playwright selector to locate element to click on
+     */
     public void doubleClick(String selector) {
         getLocator(selector).dblclick();
     }
 
+    /**
+     * Fills an element with given value.
+     *
+     * @param value value to enter
+     * @param selector playwright selector to locate element to enter data in
+     */
     public void enterInto(String value, String selector) {
         getLocator(selector).fill(value);
     }
 
+    /**
+     * Selects option by given label in a select element
+     *
+     * @param value string of label to select
+     * @param selector playwright selector to locate element to select option in
+     */
     public void selectLabelIn(String value, String selector) {
         getLocator(selector).selectOption(new SelectOption().setLabel(value));
     }
 
+    /**
+     * Selects option by given value in select element
+     * @param value string of value to select
+     * @param selector  playwright selector to locate element to select option in
+     */
     public void selectValueIn(String value, String selector) {
         getLocator(selector).selectOption(value);
     }
 
+    /**
+     * Selects option by index in select element
+     *
+     * @param index index of option to select
+     * @param selector playwright selector to locate element to select option in
+     */
     public void selectIndexIn(int index, String selector) {
         getLocator(selector).selectOption(new SelectOption().setIndex(index));
     }
 
+    /**
+     * Makes sure a checkbox or radio button is selected. So it selects when unselected and does nothing when already selected
+     *
+     * @param selector Playwright selector to locate element to select
+     */
     public void selectCheckbox(String selector) {
         getLocator(selector).check();
     }
 
+    /**
+     * Makes sure a checkbox or radiobutton is selected, but bypasses the <a href="https://playwright.dev/java/docs/actionability">actionability</a> checks
+     *
+     *  @param selector Playwright selector to locate element to select
+     */
     public void forceSelectCheckbox(String selector) {
         getLocator(selector).check(new Locator.CheckOptions().setForce(true));
     }
 
+    /**
+     * Makes sure a checkbox or radiobutton is not selected, but bypasses the <a href="https://playwright.dev/java/docs/actionability">actionability</a> checks
+     *
+     * @param selector Playwright selector to locate element to deselect
+     */
     public void forceDeselectCheckbox(String selector) {
         getLocator(selector).uncheck(new Locator.UncheckOptions().setForce(true));
     }
