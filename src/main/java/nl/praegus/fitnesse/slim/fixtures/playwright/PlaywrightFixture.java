@@ -91,9 +91,11 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     /**
-     * @deprecated renamed. {@link PlaywrightFixture#switchToPrecedingTab()}
-     * @since v1.3.3
+     * Switches to the previous tab
+     *
+     * @deprecated renamed. Use {@link PlaywrightFixture#switchToPrecedingTab()}.
      */
+    @Deprecated(since = "1.4.0")
     public void switchToPreviousTab() {
         switchToPrecedingTab();
     }
@@ -111,11 +113,13 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     /**
+     * Closes the currently active tab.
+     *
      * @deprecated unneeded convenience method. Use {@link PlaywrightFixture#switchToPrecedingTab} and
      * {@link PlaywrightFixture#closeNextTab()} instead.
      * Also works only when a previous tab is present.
-     * @since 1.3.3
      */
+    @Deprecated(since = "1.4.0")
     public void closeCurrentTab() {
         var tabToCloseIndex = getPageIndex(currentPage);
         switchToPreviousTab();
@@ -135,18 +139,63 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     //Cookie management
+    /**
+     * Sets a cookie on the current browser context
+     *
+     * @param cookieMap map of cookie key values. The cookie can be created in FitNesse by using the HSAC fixtures
+     *                  Map fixture as show below.
+     *
+     *
+     * <p>
+     * <pre>
+     * {@code
+     *
+     * |ddt:map fixture                                                         |
+     * |name|value|expires         |domain|path|secure|httpOnly|sameSite|cookie?|
+     * |test|yes  |2023-12-31 00:00|.c.com|/   |false |false   |true    |$var=  |
+     *
+     * } </pre>
+     *
+     * The cookie can then be used in a script like this
+     *
+     * <pre>
+     * {@code
+     *
+     * |script| playwright fixture |
+     * |set cookie | $var          |
+     *
+     * }
+     * </pre>
+     *
+     */
     public void setCookie(Map<String, String> cookieMap) {
         cookieManager.setCookie(cookieMap, browserContext);
     }
 
+    /**
+     * Returns cookies on the current browser context.
+     *
+     * @return Map of cookies on the current browser context. Key = cookie name and value is the cookie value.
+     */
     public Map<String, String> getCookies() {
         return cookieManager.getCookies(browserContext);
     }
 
+    /**
+     * Set multiple cookies at once
+     * @deprecated creating a list of maps in FitNesse is not very convenient. Adding the cookies to a context one by
+     * one using {@link PlaywrightFixture#setCookie(Map)} requires the same or smaller amount of code.
+     *
+     * @param cookiesList list of cookieMaps
+     */
+    @Deprecated(since = "1.4.0")
     public void setCookies(List<Map<String, String>> cookiesList) {
         cookieManager.setCookies(cookiesList, browserContext);
     }
 
+    /**
+     * Delete all cookies from current browser context.
+     */
     public void deleteCookies() {
         cookieManager.deleteCookies(browserContext);
     }
@@ -188,7 +237,13 @@ public class PlaywrightFixture extends SlimFixtureBase {
         }
     }
 
-    @Deprecated(since = "1.3.3")
+    /**
+     * Clicks an element and then waits for navigation to complete
+     *
+     * @deprecated use assertions after clicking an element to check if the expected navigation has been completed.
+     * @param selector playwright selector of element to click on
+     */
+    @Deprecated(since = "1.4.0")
     public void clickAndWaitForNavigation(String selector) {
         currentPage.waitForNavigation(() -> this.click(selector));
     }
@@ -386,6 +441,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Returns a string containing the page title
      *
      * @return the page title of the current page
+     * @since 1.4.0
      */
     public String getTitle() {
         return currentPage.title();
