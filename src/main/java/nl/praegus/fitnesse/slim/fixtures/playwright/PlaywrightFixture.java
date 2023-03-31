@@ -24,7 +24,7 @@ import static fitnesse.slim.SlimVersion.PRETTY_PRINT_TAG_START;
 /**
  * FitNesse fixture enabling the use of the java-playwright api for browser automation
  *
- * <p> <a href="https://playwright.dev/java/">Playwright Java documentation</a>.
+ * @see <a href="https://playwright.dev/java/">Playwright Java documentation</a>.
  */
 public class PlaywrightFixture extends SlimFixtureBase {
     private final Browser browser = PlaywrightSetup.getBrowser();
@@ -41,6 +41,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Sets the timeout for the current browser context.
      *
      * @param timeoutInMilliseconds the timeout in milliseconds.
+     *
      */
     public void setTimeout(Double timeoutInMilliseconds) {
         timeout = timeoutInMilliseconds;
@@ -201,19 +202,36 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     //Navigation
+
+    /**
+     * Navigates to given url from current page. Expects an existing browser context.
+     *
+     * @param url url of location to navigate to
+     */
     public void navigateTo(String url) {
         currentPage.navigate(url);
     }
 
+    /**
+     * Opens a new page (tab) and navigates to given url.
+     *
+     * @param url url of location to navigate to
+     */
     public void open(String url) {
         this.currentPage = browserContext.newPage();
         navigateTo(url);
     }
 
+    /**
+     * Navigates to the previous page in browser history.
+     */
     public void goBack() {
         currentPage.goBack();
     }
 
+    /**
+     * Reloads current page.
+     */
     public void reloadPage() {
         currentPage.reload();
     }
