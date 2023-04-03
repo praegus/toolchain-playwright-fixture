@@ -576,6 +576,15 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     /**
+     * Asserts that the page has given title.
+     *
+     * @param title expected title
+     */
+    public void assertThatPageHasTitle(String title){
+        assertThat(currentPage).hasTitle(title);
+    }
+
+    /**
      * Checks if an element is visible.
      *
      * @param selector Playwright selector to locating the element to check.
