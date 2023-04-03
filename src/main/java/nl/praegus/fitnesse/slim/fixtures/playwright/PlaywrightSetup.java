@@ -93,5 +93,6 @@ public final class PlaywrightSetup extends SlimFixtureBase {
     public void closePlaywright() {
         playwright.close();
     }
+
 }
 

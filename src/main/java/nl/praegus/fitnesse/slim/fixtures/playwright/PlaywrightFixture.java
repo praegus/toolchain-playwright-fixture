@@ -6,11 +6,8 @@ import com.microsoft.playwright.assertions.PageAssertions;
 import com.microsoft.playwright.options.*;
 import org.apache.commons.text.StringEscapeUtils;
 
-import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -26,21 +23,16 @@ import static fitnesse.slim.SlimVersion.PRETTY_PRINT_TAG_START;
 public class PlaywrightFixture extends SlimFixtureBase {
     private final Browser browser = PlaywrightSetup.getBrowser();
     private final Path screenshotsDir = getWikiFilesDir().resolve("screenshots");
-    private final Path tracesDir = getWikiFilesDir().resolve("traces");
-    private final Path storageStateDir = getWikiFilesDir().resolve("storage-states");
-    private BrowserContext browserContext;
+    private BrowserContextManager browserContextManager = new BrowserContextManager();
     private Page currentPage;
-    private String storageState;
-    private Double timeout;
 
     /**
      * Sets the timeout for the current browser context.
      *
      * @param timeoutInMilliseconds the timeout in milliseconds.
      */
-    public void setTimeout(Double timeoutInMilliseconds) {
-        timeout = timeoutInMilliseconds;
-        browserContext.setDefaultTimeout(timeout);
+    public void setDefaultTimeout(double timeoutInMilliseconds) {
+            browserContextManager.setDefaultTimeout(timeoutInMilliseconds);
     }
 
     //Page management
@@ -49,7 +41,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Opens a new browser context
      */
     public void openNewBrowserContext() {
-        browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions());
+        browserContextManager.newContext();
     }
 
     /**
@@ -62,8 +54,8 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Closes current browser context
      */
-    public void closeContext() {
-        browserContext.close();
+    public void closeBrowserContext() {
+        browserContextManager.close();
     }
 
     /**
@@ -88,16 +80,6 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     /**
-     * Switches to the previous tab
-     *
-     * @deprecated renamed. Use {@link PlaywrightFixture#switchToPrecedingTab()}.
-     */
-    @Deprecated(since = "1.4.0")
-    public void switchToPreviousTab() {
-        switchToPrecedingTab();
-    }
-
-    /**
      * Switches to preceding tab.
      *
      * @throws PlaywrightFitnesseException when no preceding tab is found
@@ -107,20 +89,6 @@ public class PlaywrightFixture extends SlimFixtureBase {
             throw new PlaywrightFitnesseException("Exception: preceding tab not found.");
         }
         currentPage = getPageList().get(getPageIndex(currentPage) - 1);
-    }
-
-    /**
-     * Closes the currently active tab.
-     *
-     * @deprecated unneeded convenience method. Use {@link PlaywrightFixture#switchToPrecedingTab} and
-     * {@link PlaywrightFixture#closeNextTab()} instead.
-     * Also works only when a previous tab is present.
-     */
-    @Deprecated(since = "1.4.0")
-    public void closeCurrentTab() {
-        var tabToCloseIndex = getPageIndex(currentPage);
-        switchToPreviousTab();
-        getPageList().get(tabToCloseIndex).close();
     }
 
     /**
@@ -137,8 +105,13 @@ public class PlaywrightFixture extends SlimFixtureBase {
 
     //Cookie management
 
+    /**
+     * Adds cookie to browser context.
+     *
+     * @param cookieKey
+     */
     public void addCookie(String cookieKey) {
-        browserContext.addCookies(Arrays.asList(CookieJar.getCookie(cookieKey)));
+        browserContextManager.addCookies((cookieKey));
     }
 
     /**
@@ -147,14 +120,14 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @return List of cookies on the current browser context. Key = cookie name and value is the cookie value.
      */
     public List<Cookie> getCookies() {
-        return browserContext.cookies();
+        return browserContextManager.cookies();
     }
 
     /**
      * Delete all cookies from current browser context.
      */
     public void clearCookies() {
-        browserContext.clearCookies();
+        browserContextManager.clearCookies();
     }
 
     //Navigation
@@ -174,7 +147,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param url url of location to navigate to
      */
     public void open(String url) {
-        this.currentPage = browserContext.newPage();
+        this.currentPage = browserContextManager.newPage();
         navigateTo(url);
     }
 
@@ -589,8 +562,10 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param url      url to be opened in new tab
      * @return boolean indicating if the new tab was opened with the given url
      */
+    @Deprecated
     public boolean clickOnOpensTabWithUrl(String selector, String url) {
-        return browserContext.waitForPage(() -> getLocator(selector).click(new Locator.ClickOptions())).url().equals(url);
+        throw new UnsupportedOperationException("Deprecated!");
+//        return browserContext.waitForPage(() -> getLocator(selector).click(new Locator.ClickOptions())).url().equals(url);
     }
 
     /**
@@ -600,10 +575,12 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param url      url to be opened in new tab
      * @return boolean indicating that the new tab was opened with the given url
      */
+    @Deprecated
     public boolean clickOnAndWaitOpensTabWithUrl(String selector, String url) {
-        browserContext.waitForPage(() -> getLocator(selector).click()).waitForURL(url);
+        throw new UnsupportedOperationException("Deprecated!");
+//        browserContext.waitForPage(() -> getLocator(selector).click()).waitForURL(url);
         // if waitForURL() did not throw, assume that the page has the expected url
-        return true;
+//        return true;
     }
 
     //Value retrieval
@@ -781,8 +758,10 @@ public class PlaywrightFixture extends SlimFixtureBase {
      *
      * @return string representation of current browser context
      */
+    @Deprecated
     public String getCurrentContext() {
-        return browserContext.toString();
+        throw new UnsupportedOperationException("Deprecated!");
+//        return browserContextManager.toString();
     }
 
     //Manage re-usable state
@@ -790,17 +769,19 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Saves current storage state in memory.
      */
-    public void saveStorageState() {
-        storageState = browserContext.storageState();
-    }
+    @Deprecated
+//    public void saveStorageState() {
+//        throw new UnsupportedOperationException("Deprecated!");
+////        storageState = browserContextManager.storageState();
+//    }
 
     /**
      * Saves current storage state as a json file
      *
      * @param name name of the json file without extension
      */
-    public void saveStorageStateToFile(String name) {
-        browserContext.storageState(new BrowserContext.StorageStateOptions().setPath(Paths.get(storageStateDir + "/" + name + ".json")));
+    public void saveStorageState(String name) {
+        browserContextManager.storageState(name);
     }
 
     /**
@@ -808,16 +789,18 @@ public class PlaywrightFixture extends SlimFixtureBase {
      *
      * @return storage state
      */
+    @Deprecated
     public String getStorageState() {
-        return storageState;
+        return browserContextManager.getStorageState();
     }
 
     /**
      * Open a new browser context with a saved storage state
      */
+    @Deprecated
     public void openNewContextWithSavedStorageState() {
-        browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions().setStorageState(getStorageState()));
-        setTimeout(timeout);
+        throw new UnsupportedOperationException("Deprecated!");
+//        browserContextManager.newContext();
     }
 
     /**
@@ -825,12 +808,8 @@ public class PlaywrightFixture extends SlimFixtureBase {
      *
      * @param name name of the storage state file
      */
-    public void openNewContextWithSavedStorageStateFromFile(String name) {
-        try {
-            browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions().setStorageStatePath(Paths.get(storageStateDir + "/" + name + ".json")));
-        } catch (Exception e) {
-            throw new PlaywrightFitnesseException(e.getMessage());
-        }
+    public void openNewContextWithStorageState(String name) {
+        browserContextManager.openNewContextWithStorageState(name);
     }
 
     //Tracing
@@ -839,7 +818,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Starts a trace
      */
     public void startTrace() {
-        browserContext.tracing().start(new Tracing.StartOptions().setScreenshots(true).setSnapshots(true).setSources(false));
+        browserContextManager.startTrace();
     }
 
     /**
@@ -848,22 +827,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param name name of the trace file
      */
     public void saveTrace(String name) {
-        browserContext.tracing().stop(new Tracing.StopOptions().setPath(Paths.get(tracesDir + "/" + name + ".zip")));
-    }
-
-    /**
-     * Opens a trace file.
-     *
-     * @param name name of the trace to open.
-     * @throws IOException
-     * @throws InterruptedException
-     * @deprecated Does not work properly. Not all images are loaded. Using
-     * mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="show-trace trace.zip" is preferred.
-     */
-    @Deprecated(since = "1.4.0")
-    public void openTrace(String name) throws IOException, InterruptedException {
-        String[] args = {"show-trace", tracesDir + "/" + name + ".zip"};
-        CLI.main(args);
+        browserContextManager.saveTrace(name);
     }
 
     //Network
@@ -874,9 +838,11 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param openUrl     url to open.
      * @param responseUrl url that should be called during loading of the page.
      */
+    @Deprecated
     public void openAndWaitForResponseFromUrl(String openUrl, String responseUrl) {
-        this.currentPage = browserContext.newPage();
-        currentPage.waitForResponse(responseUrl, () -> navigateTo(openUrl));
+        throw new UnsupportedOperationException("Deprecated!");
+//        this.currentPage = browserContext.newPage();
+//        currentPage.waitForResponse(responseUrl, () -> navigateTo(openUrl));
     }
 
     /**
@@ -885,8 +851,10 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param selector Playwright selector to locate element to click on.
      * @param url      url that should respond after clicking
      */
+    @Deprecated
     public void clickAndWaitForResponseFromUrl(String selector, String url) {
-        currentPage.waitForResponse(url, () -> this.click(selector));
+        throw new UnsupportedOperationException("Deprecated!");
+//        currentPage.waitForResponse(url, () -> this.click(selector));
     }
 
     /**
@@ -894,8 +862,10 @@ public class PlaywrightFixture extends SlimFixtureBase {
      *
      * @param selector Playwright selector to locate element to click on.
      */
+    @Deprecated
     public void clickAndWaitForRequestFinished(String selector) {
-        currentPage.waitForRequestFinished(() -> this.click(selector));
+        throw new UnsupportedOperationException("Deprecated!");
+//        currentPage.waitForRequestFinished(() -> this.click(selector));
     }
 
     /**
@@ -904,6 +874,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param selector Playwright selector to locate element to select.
      * @param url      url that should respond after selecting
      */
+    @Deprecated
     public void selectAndWaitForResponseFromUrl(String selector, String url) {
         currentPage.waitForResponse(Pattern.compile(url), () -> this.selectCheckbox(selector));
     }
@@ -913,6 +884,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      *
      * @param selector Playwright selector to locate element to select.
      */
+    @Deprecated
     public void selectAndWaitForRequestFinished(String selector) {
         currentPage.waitForRequestFinished(() -> this.selectCheckbox(selector));
     }
@@ -924,6 +896,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param selector Playwright selector to locate element to enter the value into.
      * @param url      url that should respond after entering the value
      */
+    @Deprecated
     public void enterIntoAndWaitForResponseFromUrl(String value, String selector, String url) {
         currentPage.waitForResponse(url, () -> this.enterInto(value, selector));
     }
@@ -945,7 +918,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param body response body to return when mocked url is called.
      */
     public void setUrlToReturnBody(String url, String body) {
-        browserContext.route(url, route -> route.fulfill(new Route.FulfillOptions().setBody(body)));
+        browserContextManager.setUrlToReturnBody(url, body);
     }
 
     //Helper methods
@@ -977,7 +950,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @return list of pages in current browser context
      */
     private List<Page> getPageList() {
-        return browserContext.pages();
+        return browserContextManager.pages();
     }
 
     /**
@@ -1013,7 +986,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
 
     @Override
     protected Throwable handleException(Throwable t) {
-        return (currentPage == null || browserContext == null) ? t : new PlaywrightFitnesseException(getExceptionMessageWithScreenshot(t));
+        return (currentPage == null || browserContextManager.getBrowserContext() == null) ? t : new PlaywrightFitnesseException(getExceptionMessageWithScreenshot(t));
     }
 
     protected String getExceptionMessageWithScreenshot(Throwable t) {
