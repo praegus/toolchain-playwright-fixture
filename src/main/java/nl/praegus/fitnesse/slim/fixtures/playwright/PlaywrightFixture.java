@@ -279,7 +279,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     /**
-     * Clicks an element and then waits for navigation to complete. Useful to click e.g. steppers.
+     * Clicks an element and then waits for navigation to complete.
      *
      * @param selector playwright selector to locate element to click on
      * @deprecated use assertions after clicking an element to check if the expected navigation has been completed.
