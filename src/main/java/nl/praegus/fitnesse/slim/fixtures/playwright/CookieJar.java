@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 
 final class CookieJar {
+    private CookieJar() {}
+
     private static HashMap<String, Cookie> cookieMap = new HashMap<>();
 
     public static void addCookie(String key, Cookie cookie) {

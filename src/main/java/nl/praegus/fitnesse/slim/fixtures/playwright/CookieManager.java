@@ -58,8 +58,9 @@ public class CookieManager {
     }
 
     public void execute() {
-            CookieJar.addCookie(key, converter.getObject(this.toString()));
+        CookieJar.addCookie(key, converter.getObject(this.toString()));
     }
+
     public Cookie cookie() {
         return converter.getObject(this.toString());
     }

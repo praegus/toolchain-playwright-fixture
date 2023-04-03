@@ -48,7 +48,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Opens a new browser context
      */
-    public void openNewContext() {
+    public void openNewBrowserContext() {
         browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions());
     }
 
@@ -137,62 +137,23 @@ public class PlaywrightFixture extends SlimFixtureBase {
 
     //Cookie management
 
-    /**
-     * Sets a cookie on the current browser context
-     *
-     * @param cookieMap map of cookie key values. The cookie can be created in FitNesse by using the HSAC fixtures
-     *                  Map fixture as show below.
-     *
-     *                  <p>
-     *                  <pre>
-     *                  {@code
-     *
-     *                  |ddt:map fixture                                                         |
-     *                  |name|value|expires         |domain|path|secure|httpOnly|sameSite|cookie?|
-     *                  |test|yes  |2023-12-31 00:00|.c.com|/   |false |false   |true    |$var=  |
-     *
-     *                  } </pre>
-     *                  <p>
-     *                  The cookie can then be used in a script like this
-     *
-     *                  <pre>
-     *                  {@code
-     *
-     *                  |script| playwright fixture |
-     *                  |set cookie | $var          |
-     *
-     *                  }
-     *                  </pre>
-     */
-    public void setCookie(Map<String, String> cookieMap) {
-        cookieManager.setCookie(cookieMap, browserContext);
+    public void addCookie(String cookieKey) {
+        browserContext.addCookies(Arrays.asList(CookieJar.getCookie(cookieKey)));
     }
 
     /**
      * Returns cookies on the current browser context.
      *
-     * @return Map of cookies on the current browser context. Key = cookie name and value is the cookie value.
+     * @return List of cookies on the current browser context. Key = cookie name and value is the cookie value.
      */
-    public Map<String, String> getCookies() {
-        return cookieManager.getCookies(browserContext);
-    }
-
-    /**
-     * Set multiple cookies at once
-     *
-     * @param cookiesList list of cookieMaps
-     * @deprecated creating a list of maps in FitNesse is not very convenient. Adding the cookies to a context one by
-     * one using {@link PlaywrightFixture#setCookie(Map)} requires the same or smaller amount of code.
-     */
-    @Deprecated(since = "1.4.0")
-    public void setCookies(List<Map<String, String>> cookiesList) {
-        cookieManager.setCookies(cookiesList, browserContext);
+    public List<Cookie> getCookies() {
+        return browserContext.cookies();
     }
 
     /**
      * Delete all cookies from current browser context.
      */
-    public void deleteCookies() {
+    public void clearCookies() {
         browserContext.clearCookies();
     }
 
@@ -507,7 +468,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Asserts that an element contains a given text.
      *
      * @param selector Playwright selector to locate element that contains text
-     * @param value string that should be present in element
+     * @param value    string that should be present in element
      */
     public void assertThatContainsText(String selector, String value) {
         assertThat(getLocator(selector)).containsText(value);
@@ -515,8 +476,9 @@ public class PlaywrightFixture extends SlimFixtureBase {
 
     /**
      * Asserts that an element has a given value.
+     *
      * @param selector Playwright selector to locate element that should have a value
-     * @param value value that should be present in element
+     * @param value    value that should be present in element
      */
     public void assertThatHasValue(String selector, String value) {
         assertThat(getLocator(selector)).hasValue(value);
@@ -526,8 +488,8 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Asserts that an element has a given value before the timeout expires.
      *
      * @param selector Playwright selector to locate element that should have a value
-     * @param value value that should be present in element
-     * @param timeout timeout in milliseconds
+     * @param value    value that should be present in element
+     * @param timeout  timeout in milliseconds
      */
     public void assertThatHasValueWithTimeout(String selector, String value, double timeout) {
         assertThat(getLocator(selector)).hasValue(value, new LocatorAssertions.HasValueOptions().setTimeout(timeout));
@@ -545,7 +507,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Asserts that the page has a given url before the timeout expires.
      *
-     * @param url expected url
+     * @param url     expected url
      * @param timeout timeout in milliseconds
      */
     public void assertThatPageHasUrlWithTimeout(String url, double timeout) {
@@ -564,7 +526,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Asserts that the page doen not have a given url before the timeout expires.
      *
-     * @param url url the page should not have
+     * @param url     url the page should not have
      * @param timeout timeout in milliseconds
      */
     public void assertThatPageHasNotUrlWithTimeout(String url, double timeout) {
@@ -576,7 +538,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      *
      * @param title expected title
      */
-    public void assertThatPageHasTitle(String title){
+    public void assertThatPageHasTitle(String title) {
         assertThat(currentPage).hasTitle(title);
     }
 
@@ -624,7 +586,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Checks if clicking an element opens a new tab with given url.
      *
      * @param selector Playwright selector to locating the element to click
-     * @param url url to be opened in new tab
+     * @param url      url to be opened in new tab
      * @return boolean indicating if the new tab was opened with the given url
      */
     public boolean clickOnOpensTabWithUrl(String selector, String url) {
@@ -635,7 +597,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Checks that clicking an element opens a new tab with given url, else an exception is thrown.
      *
      * @param selector Playwright selector to locate the element
-     * @param url url to be opened in new tab
+     * @param url      url to be opened in new tab
      * @return boolean indicating that the new tab was opened with the given url
      */
     public boolean clickOnAndWaitOpensTabWithUrl(String selector, String url) {
@@ -675,7 +637,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Gets the value of a given attribute for an element.
      *
      * @param attributeName attribute to get the value from
-     * @param selector Playwright selector to locate the element to get the attribute value from
+     * @param selector      Playwright selector to locate the element to get the attribute value from
      * @return value of the given attribute
      */
     public String valueOfAttributeForSelector(String attributeName, String selector) {
@@ -892,12 +854,11 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Opens a trace file.
      *
-     * @deprecated Does not work properly. Not all images are loaded. Using
-     * mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="show-trace trace.zip" is preferred.
-     *
      * @param name name of the trace to open.
      * @throws IOException
      * @throws InterruptedException
+     * @deprecated Does not work properly. Not all images are loaded. Using
+     * mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="show-trace trace.zip" is preferred.
      */
     @Deprecated(since = "1.4.0")
     public void openTrace(String name) throws IOException, InterruptedException {
@@ -910,7 +871,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Opens a page and waits for a response from another server.
      *
-     * @param openUrl url to open.
+     * @param openUrl     url to open.
      * @param responseUrl url that should be called during loading of the page.
      */
     public void openAndWaitForResponseFromUrl(String openUrl, String responseUrl) {
@@ -922,7 +883,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Clicks an element and waits for a response from a given url.
      *
      * @param selector Playwright selector to locate element to click on.
-     * @param url url that should respond after clicking
+     * @param url      url that should respond after clicking
      */
     public void clickAndWaitForResponseFromUrl(String selector, String url) {
         currentPage.waitForResponse(url, () -> this.click(selector));
@@ -941,7 +902,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Selects an element and waits for a response from a given url.
      *
      * @param selector Playwright selector to locate element to select.
-     * @param url url that should respond after selecting
+     * @param url      url that should respond after selecting
      */
     public void selectAndWaitForResponseFromUrl(String selector, String url) {
         currentPage.waitForResponse(Pattern.compile(url), () -> this.selectCheckbox(selector));
@@ -958,9 +919,10 @@ public class PlaywrightFixture extends SlimFixtureBase {
 
     /**
      * Enters and value into an element and waits for a response from a given url.
-     * @param value value to enter
+     *
+     * @param value    value to enter
      * @param selector Playwright selector to locate element to enter the value into.
-     * @param url url that should respond after entering the value
+     * @param url      url that should respond after entering the value
      */
     public void enterIntoAndWaitForResponseFromUrl(String value, String selector, String url) {
         currentPage.waitForResponse(url, () -> this.enterInto(value, selector));
@@ -979,7 +941,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Mocks an endpoint to return a given body.
      *
-     * @param url url to mock
+     * @param url  url to mock
      * @param body response body to return when mocked url is called.
      */
     public void setUrlToReturnBody(String url, String body) {
