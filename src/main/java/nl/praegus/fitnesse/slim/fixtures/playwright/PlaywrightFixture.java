@@ -279,7 +279,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     /**
-     * Clicks an element and then waits for navigation to complete. Useful to click e.g. steppers.
+     * Clicks an element and then waits for navigation to complete.
      *
      * @param selector playwright selector to locate element to click on
      * @deprecated use assertions after clicking an element to check if the expected navigation has been completed.
@@ -573,6 +573,15 @@ public class PlaywrightFixture extends SlimFixtureBase {
      */
     public void assertThatPageHasNotUrlWithTimeout(String url, double timeout) {
         assertThat(currentPage).not().hasURL(Pattern.compile(url), new PageAssertions.HasURLOptions().setTimeout(timeout));
+    }
+
+    /**
+     * Asserts that the page has given title.
+     *
+     * @param title expected title
+     */
+    public void assertThatPageHasTitle(String title){
+        assertThat(currentPage).hasTitle(title);
     }
 
     /**
