@@ -1,8 +1,11 @@
 package nl.praegus.fitnesse.slim.fixtures.playwright;
 
-import com.microsoft.playwright.*;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Route;
+import com.microsoft.playwright.Tracing;
 import com.microsoft.playwright.options.Cookie;
-import fit.exception.FitFailureException;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,29 +13,26 @@ import java.util.Arrays;
 import java.util.List;
 
 public class BrowserContextManager {
-
-    private final Browser browser = PlaywrightSetup.getBrowser();
-    private final Browser.NewContextOptions newContextOptions = PlaywrightSetup.getNewContextOptions();
-    public BrowserContext browserContext = getBrowserContext();
-    private Double defaultTimeout;
-
+    private final Browser browser;
+    private final Browser.NewContextOptions newContextOptions;
+    private BrowserContext browserContext;
     private final Path storageStateDir = SlimFixtureBase.getWikiFilesDir().resolve("storage-states");
-    private final Path tracesDir = SlimFixtureBase.getWikiFilesDir().resolve("storage-states");
+    private final Path tracesDir = SlimFixtureBase.getWikiFilesDir().resolve("traces");
+
+    public BrowserContextManager(Browser currentBrowser, Browser.NewContextOptions currentNewContextOptions) {
+        browser = currentBrowser;
+        newContextOptions = currentNewContextOptions;
+    }
 
     public String getStorageState() {
         return getBrowserContext().storageState();
     }
 
     public BrowserContext getBrowserContext() {
-//            if (browserContext == null) {
-                browserContext = newContext();
-//            }
-            return browserContext;
-    }
-
-    public void setDefaultTimeout(double timeout) {
-        defaultTimeout = timeout;
-        getBrowserContext().setDefaultTimeout(timeout);
+        if (browserContext == null) {
+            browserContext = newContext();
+        }
+        return browserContext;
     }
 
     public BrowserContext newContext() {
@@ -49,10 +49,8 @@ public class BrowserContextManager {
     }
 
     public void close() {
-//        if (browserContext != null) {
-            browserContext.close();
-//            browserContext = null;
-//        }
+        browserContext.close();
+        browserContext = null;
     }
 
     public void addCookies(String cookieKey) {
@@ -68,7 +66,7 @@ public class BrowserContextManager {
     }
 
     public Page newPage() {
-       return getBrowserContext().newPage();
+        return getBrowserContext().newPage();
     }
 
     public void storageState(String name) {
@@ -89,5 +87,9 @@ public class BrowserContextManager {
 
     public List<Page> pages() {
         return getBrowserContext().pages();
+    }
+
+    public void setDefaultTimeout(double timeout) {
+        getBrowserContext().setDefaultTimeout(timeout);
     }
 }

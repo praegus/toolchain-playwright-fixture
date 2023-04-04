@@ -22,8 +22,9 @@ import static fitnesse.slim.SlimVersion.PRETTY_PRINT_TAG_START;
  */
 public class PlaywrightFixture extends SlimFixtureBase {
     private final Browser browser = PlaywrightSetup.getBrowser();
+    private final Browser.NewContextOptions newContextOptions = PlaywrightSetup.getNewContextOptions();
     private final Path screenshotsDir = getWikiFilesDir().resolve("screenshots");
-    private BrowserContextManager browserContextManager = new BrowserContextManager();
+    private BrowserContextManager browserContextManager = new BrowserContextManager(browser, newContextOptions);
     private Page currentPage;
 
     /**
@@ -111,7 +112,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param cookieKey
      */
     public void addCookie(String cookieKey) {
-        browserContextManager.addCookies((cookieKey));
+        browserContextManager.addCookies(cookieKey);
     }
 
     /**
