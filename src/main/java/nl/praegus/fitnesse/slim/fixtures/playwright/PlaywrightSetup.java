@@ -8,6 +8,7 @@ import nl.praegus.fitnesse.slim.fixtures.playwright.DI.PlaywrightComponent;
 import nl.praegus.fitnesse.slim.fixtures.playwright.DI.PlaywrightModule;
 
 import javax.inject.Inject;
+import java.nio.file.Path;
 
 public final class PlaywrightSetup extends SlimFixtureBase {
     @Inject
@@ -20,9 +21,17 @@ public final class PlaywrightSetup extends SlimFixtureBase {
     @Inject
     Browser.NewContextOptions newContextOptions;
 
-    public PlaywrightSetup(String browserName) {
-        PlaywrightComponent component = DaggerPlaywrightComponent.builder()
-                .playwrightModule(new PlaywrightModule(browserName))
+    public PlaywrightSetup() {
+        init("chromium");
+    }
+
+    public PlaywrightSetup(String browserType) {
+        init(browserType);
+    }
+
+    private void init(String browserType){
+        var component = DaggerPlaywrightComponent.builder()
+                .playwrightModule(new PlaywrightModule(browserType))
                 .build();
 
         component.inject(this);
@@ -32,14 +41,16 @@ public final class PlaywrightSetup extends SlimFixtureBase {
         browser = browserType.launch(launchOptions);
     }
 
-    public Browser.NewContextOptions getNewContextOptions() {
-        return newContextOptions;
+    public void  closeBrowser( ){
+        browser.close();
     }
 
     public void setHeadless(Boolean headless) {
         launchOptions.setHeadless(headless);
     }
 
+    // For debugging
+    @Deprecated
     public void nu() {
         browser.newContext().newPage().navigate("https://nu.nl");
     }

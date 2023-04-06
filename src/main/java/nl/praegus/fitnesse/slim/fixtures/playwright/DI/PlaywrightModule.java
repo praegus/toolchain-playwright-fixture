@@ -14,8 +14,8 @@ import javax.inject.Singleton;
 public class PlaywrightModule {
     String browserType;
 
-    public PlaywrightModule(String browserName) {
-        this.browserType = browserName;
+    public PlaywrightModule(String browserType) {
+        this.browserType = browserType.toLowerCase();
     }
 
     @Provides
@@ -38,6 +38,7 @@ public class PlaywrightModule {
 
     @Provides
     BrowserType provideBrowser(Playwright playwright, BrowserType.LaunchOptions launchOptions) {
+        //TODO Get rid of try catch somehow.
         try {
             return (BrowserType) Playwright.class.getMethod(browserType).invoke(playwright);
         } catch (Exception e) {
