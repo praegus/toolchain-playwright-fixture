@@ -3,96 +3,49 @@ package nl.praegus.fitnesse.slim.fixtures.playwright;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Playwright;
-import com.microsoft.playwright.options.ColorScheme;
-import com.microsoft.playwright.options.Proxy;
+import nl.praegus.fitnesse.slim.fixtures.playwright.DI.DaggerPlaywrightComponent;
+import nl.praegus.fitnesse.slim.fixtures.playwright.DI.PlaywrightComponent;
+import nl.praegus.fitnesse.slim.fixtures.playwright.DI.PlaywrightModule;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
+import javax.inject.Inject;
 
 public final class PlaywrightSetup extends SlimFixtureBase {
-    private static final Playwright playwright = Playwright.create();
-    private static Browser browser;
-    private static final BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions();
-    private static final Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions();
-    private final Path harDir = getWikiFilesDir().resolve("har");
+    @Inject
+    Playwright playwright;
+    @Inject
+    BrowserType browserType;
+    @Inject
+    BrowserType.LaunchOptions launchOptions;
+    private Browser browser;
+    @Inject
+    Browser.NewContextOptions newContextOptions;
 
-    public static void configureProxy(String server) {
-        launchOptions.setProxy(new Proxy(server));
+    public PlaywrightSetup(String browserName) {
+        PlaywrightComponent component = DaggerPlaywrightComponent.builder()
+                .playwrightModule(new PlaywrightModule(browserName))
+                .build();
+
+        component.inject(this);
     }
 
-    public static void startBrowser(String browserName) {
-        switch (browserName.toLowerCase()) {
-            case "chromium":
-                browser = playwright.chromium().launch(launchOptions);
-                break;
-            case "firefox":
-                browser = playwright.firefox().launch(launchOptions);
-                break;
-            case "webkit":
-                browser = playwright.webkit().launch(launchOptions);
-                break;
-            default:
-                throw new PlaywrightFitnesseException("Unsupported browser name. Use Chromium, Firefox or Webkit!");
-        }
+    public void startBrowser() {
+        browser = browserType.launch(launchOptions);
     }
 
-    public static void setDeviceScaleFactor(int scaleFactor) {
-        newContextOptions.setDeviceScaleFactor(scaleFactor);
-    }
-
-    public static void setViewportWidthAndHeight(int width, int height) {
-        newContextOptions.setViewportSize(width, height);
-    }
-
-    public static Browser.NewContextOptions getNewContextOptions() {
+    public Browser.NewContextOptions getNewContextOptions() {
         return newContextOptions;
-    }
-
-    public static Browser getBrowser() {
-        return browser;
     }
 
     public void setHeadless(Boolean headless) {
         launchOptions.setHeadless(headless);
     }
 
-    public void createHarWithName(String harName) {
-        newContextOptions.setRecordHarOmitContent(true);
-        newContextOptions.setRecordHarPath(Paths.get(harDir + "/" + harName + ".har"));
-    }
-
-    public void createHar() {
-        createHarWithName("harFile");
-    }
-
-    public void setAcceptDownloads(Boolean acceptDownloads) {
-        newContextOptions.setAcceptDownloads(acceptDownloads);
-    }
-
-    public void setBypassCSP(Boolean bypassCSP) {
-        newContextOptions.setBypassCSP(bypassCSP);
-    }
-
-    public void setColorScheme(String colorScheme) {
-        newContextOptions.setColorScheme(ColorScheme.valueOf(colorScheme.toUpperCase()));
-    }
-
-    public void setExtraHTTPHeaders(Map<String, String> extraHTTPHeaders) {
-        newContextOptions.setExtraHTTPHeaders(extraHTTPHeaders);
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        newContextOptions.setBaseURL(baseUrl);
-    }
-
-    public void closeBrowser() {
-        browser.close();
+    public void nu() {
+        browser.newContext().newPage().navigate("https://nu.nl");
     }
 
     public void closePlaywright() {
         playwright.close();
     }
-
 }
 

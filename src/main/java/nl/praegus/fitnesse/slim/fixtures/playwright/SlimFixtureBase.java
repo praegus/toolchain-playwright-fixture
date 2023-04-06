@@ -10,24 +10,6 @@ import java.nio.file.Path;
 
 public class SlimFixtureBase implements InteractionAwareFixture {
 
-    private static final String FITNESSE_DIR = "wiki";
-    private static final Path wikiFilesDir = Path.of(ContextConfigurator.DEFAULT_ROOT, "files");
-
-    public static Path getWikiFilesDir() {
-        return Boolean.TRUE.equals(runsInFitNesseDir()) ? wikiFilesDir : Path.of(FITNESSE_DIR).resolve(wikiFilesDir);
-    }
-
-    private static Boolean runsInFitNesseDir() {
-        return System.getProperty("user.dir").endsWith(FITNESSE_DIR);
-    }
-
-    /**
-     * Function to get the path to the wiki files directory.
-     * If the fixture is run from the project root (e.g. by using Maven and a junit runner)
-     * wiki/FitNesseRoot/files is returned. If run from the wiki FitNesseRoot/files is returned.
-     * @return relative path to wiki/FitNesseRoot/files
-     */
-
     @Override
     public Object aroundSlimInvoke(FixtureInteraction interaction, Method method, Object... arguments) throws InvocationTargetException {
         Object result;

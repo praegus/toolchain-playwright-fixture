@@ -16,8 +16,8 @@ public class BrowserContextManager {
     private final Browser browser;
     private final Browser.NewContextOptions newContextOptions;
     private BrowserContext browserContext;
-    private final Path storageStateDir = SlimFixtureBase.getWikiFilesDir().resolve("storage-states");
-    private final Path tracesDir = SlimFixtureBase.getWikiFilesDir().resolve("traces");
+//    private final Path storageStateDir = SlimFixtureBase.getWikiFilesDir().resolve("storage-states");
+//    private final Path tracesDir = SlimFixtureBase.getWikiFilesDir().resolve("traces");
 
     public BrowserContextManager(Browser currentBrowser, Browser.NewContextOptions currentNewContextOptions) {
         browser = currentBrowser;
@@ -41,11 +41,11 @@ public class BrowserContextManager {
     }
 
     public void openNewContextWithStorageState(String name) {
-        try {
-            browserContext = browser.newContext(newContextOptions.setStorageStatePath(Paths.get(storageStateDir + "/" + name + ".json")));
-        } catch (Exception e) {
-            throw new PlaywrightFitnesseException(e.getMessage());
-        }
+//        try {
+//            browserContext = browser.newContext(newContextOptions.setStorageStatePath(Paths.get(storageStateDir + "/" + name + ".json")));
+//        } catch (Exception e) {
+//            throw new PlaywrightFitnesseException(e.getMessage());
+//        }
     }
 
     public void close() {
@@ -70,7 +70,7 @@ public class BrowserContextManager {
     }
 
     public void storageState(String name) {
-        getBrowserContext().storageState(new BrowserContext.StorageStateOptions().setPath(Paths.get(storageStateDir + "/" + name + ".json")));
+//        getBrowserContext().storageState(new BrowserContext.StorageStateOptions().setPath(Paths.get(storageStateDir + "/" + name + ".json")));
     }
 
     public void startTrace() {
@@ -78,7 +78,7 @@ public class BrowserContextManager {
     }
 
     public void saveTrace(String name) {
-        getBrowserContext().tracing().stop(new Tracing.StopOptions().setPath(Paths.get(tracesDir + "/" + name + ".zip")));
+//        getBrowserContext().tracing().stop(new Tracing.StopOptions().setPath(Paths.get(tracesDir + "/" + name + ".zip")));
     }
 
     public void setUrlToReturnBody(String url, String body) {
