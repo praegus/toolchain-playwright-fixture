@@ -17,7 +17,7 @@ public final class PlaywrightSetup extends SlimFixtureBase {
     BrowserType browserType;
     @Inject
     BrowserType.LaunchOptions launchOptions;
-    private Browser browser;
+    Browser browser;
     @Inject
     Browser.NewContextOptions newContextOptions;
 
@@ -29,7 +29,7 @@ public final class PlaywrightSetup extends SlimFixtureBase {
         init(browserType);
     }
 
-    private void init(String browserType){
+    private void init(String browserType) {
         var component = DaggerPlaywrightComponent.builder()
                 .playwrightModule(new PlaywrightModule(browserType))
                 .build();
@@ -41,7 +41,7 @@ public final class PlaywrightSetup extends SlimFixtureBase {
         browser = browserType.launch(launchOptions);
     }
 
-    public void  closeBrowser( ){
+    public void closeBrowser() {
         browser.close();
     }
 
