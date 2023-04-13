@@ -21,17 +21,33 @@ public final class PlaywrightSetup extends SlimFixtureBase {
     @Inject
     Browser.NewContextOptions newContextOptions;
 
+    /**
+     * If the empty constructor is used. Chromium is started.
+     */
     public PlaywrightSetup() {
         init(PlaywrightBrowserType.CHROMIUM);
     }
+
+    /**
+     * When constructor argument is provided start given browser.
+     *
+     * @param browserName name of the browser to use. E.g. "chromium"
+     *
+     * @throws UnsupportedBrowserException
+     */
 
     public PlaywrightSetup(String browserName) {
         init(PlaywrightBrowserType.findByName(browserName).orElseThrow(UnsupportedBrowserException::new));
     }
 
-    private void init(PlaywrightBrowserType browserType) {
+    /**
+     * Sets up dependency injection with Dagger
+     *
+     * @param playwrightBrowserType PlaywrightBrowserType to initialize
+     */
+    private void init(PlaywrightBrowserType playwrightBrowserType) {
         var component = DaggerPlaywrightComponent.builder()
-                .playwrightModule(new PlaywrightModule(browserType))
+                .playwrightModule(new PlaywrightModule(playwrightBrowserType))
                 .build();
 
         component.inject(this);
