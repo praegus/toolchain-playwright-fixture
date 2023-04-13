@@ -1,12 +1,11 @@
 package nl.praegus.fitnesse.slim.fixtures.playwright;
 
-import fitnesse.ContextConfigurator;
 import fitnesse.slim.fixtureInteraction.FixtureInteraction;
 import fitnesse.slim.fixtureInteraction.InteractionAwareFixture;
+import nl.praegus.fitnesse.slim.fixtures.playwright.exceptions.PlaywrightFitnesseException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.Path;
 
 public class SlimFixtureBase implements InteractionAwareFixture {
 

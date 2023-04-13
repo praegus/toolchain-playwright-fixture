@@ -3,7 +3,7 @@ package nl.praegus.fitnesse.slim.fixtures.playwright;
 import com.microsoft.playwright.options.Cookie;
 import nl.praegus.fitnesse.slim.fixtures.playwright.converters.CookieConverter;
 
-public class CookieManager {
+public class CookieSetup {
     private String key;
     private String name;
     private String value;
@@ -16,7 +16,7 @@ public class CookieManager {
 
     private final CookieConverter converter;
 
-    public CookieManager() {
+    public CookieSetup() {
         fitnesse.slim.converters.ConverterRegistry.addConverter(Cookie.class, new CookieConverter());
         converter = (CookieConverter) fitnesse.slim.converters.ConverterRegistry.getConverterForClass(Cookie.class);
     }

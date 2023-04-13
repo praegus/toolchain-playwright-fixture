@@ -1,4 +1,4 @@
-package nl.praegus.fitnesse.slim.fixtures.playwright.DI;
+package nl.praegus.fitnesse.slim.fixtures.playwright.di;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
@@ -6,16 +6,17 @@ import com.microsoft.playwright.Playwright;
 
 import dagger.Module;
 import dagger.Provides;
-import nl.praegus.fitnesse.slim.fixtures.playwright.PlaywrightFitnesseException;
+import nl.praegus.fitnesse.slim.fixtures.playwright.enums.PlaywrightBrowserType;
+import nl.praegus.fitnesse.slim.fixtures.playwright.exceptions.PlaywrightFitnesseException;
 
 import javax.inject.Singleton;
 
 @Module
 public class PlaywrightModule {
-    String browserType;
+    PlaywrightBrowserType browserType;
 
-    public PlaywrightModule(String browserType) {
-        this.browserType = browserType.toLowerCase();
+    public PlaywrightModule(PlaywrightBrowserType browserType) {
+        this.browserType = browserType;
     }
 
     @Provides
@@ -40,7 +41,7 @@ public class PlaywrightModule {
     BrowserType provideBrowser(Playwright playwright, BrowserType.LaunchOptions launchOptions) {
         //TODO Get rid of try catch somehow.
         try {
-            return (BrowserType) Playwright.class.getMethod(browserType).invoke(playwright);
+            return (BrowserType) Playwright.class.getMethod(browserType.toString().toLowerCase()).invoke(playwright);
         } catch (Exception e) {
             throw new PlaywrightFitnesseException("Unsupported browser name. Use Chromium, Firefox or Webkit!");
         }

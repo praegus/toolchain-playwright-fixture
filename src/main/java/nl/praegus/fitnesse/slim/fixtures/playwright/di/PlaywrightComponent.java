@@ -1,4 +1,4 @@
-package nl.praegus.fitnesse.slim.fixtures.playwright.DI;
+package nl.praegus.fitnesse.slim.fixtures.playwright.di;
 
 import dagger.Component;
 import nl.praegus.fitnesse.slim.fixtures.playwright.PlaywrightSetup;

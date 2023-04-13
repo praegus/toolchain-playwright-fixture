@@ -3,12 +3,12 @@ package nl.praegus.fitnesse.slim.fixtures.playwright;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Playwright;
-import nl.praegus.fitnesse.slim.fixtures.playwright.DI.DaggerPlaywrightComponent;
-import nl.praegus.fitnesse.slim.fixtures.playwright.DI.PlaywrightComponent;
-import nl.praegus.fitnesse.slim.fixtures.playwright.DI.PlaywrightModule;
+import nl.praegus.fitnesse.slim.fixtures.playwright.di.DaggerPlaywrightComponent;
+import nl.praegus.fitnesse.slim.fixtures.playwright.di.PlaywrightModule;
+import nl.praegus.fitnesse.slim.fixtures.playwright.enums.PlaywrightBrowserType;
+import nl.praegus.fitnesse.slim.fixtures.playwright.exceptions.UnsupportedBrowserException;
 
 import javax.inject.Inject;
-import java.nio.file.Path;
 
 public final class PlaywrightSetup extends SlimFixtureBase {
     @Inject
@@ -22,14 +22,14 @@ public final class PlaywrightSetup extends SlimFixtureBase {
     Browser.NewContextOptions newContextOptions;
 
     public PlaywrightSetup() {
-        init("chromium");
+        init(PlaywrightBrowserType.CHROMIUM);
     }
 
-    public PlaywrightSetup(String browserType) {
-        init(browserType);
+    public PlaywrightSetup(String browserName) {
+        init(PlaywrightBrowserType.findByName(browserName).orElseThrow(UnsupportedBrowserException::new));
     }
 
-    private void init(String browserType) {
+    private void init(PlaywrightBrowserType browserType) {
         var component = DaggerPlaywrightComponent.builder()
                 .playwrightModule(new PlaywrightModule(browserType))
                 .build();
