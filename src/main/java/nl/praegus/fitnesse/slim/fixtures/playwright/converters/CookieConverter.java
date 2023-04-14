@@ -4,6 +4,7 @@ import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.SameSiteAttribute;
 import fitnesse.slim.converters.ConverterBase;
 
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -12,10 +13,12 @@ import java.util.Map;
 import static java.time.LocalDateTime.parse;
 
 public class CookieConverter extends ConverterBase<Cookie> {
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC);
+
     @Override
     public String toString(Cookie c) {
         return String.format("name=%s;value=%s;domain=%s;path=%s;expires=%s;secure=%s;httpOnly=%s;sameSite=%s",
-                c.name, c.value, c.domain, c.path, c.expires, c.secure, c.httpOnly, c.sameSite);
+                c.name, c.value, c.domain, c.path, epochToString(c.expires), c.secure, c.httpOnly, c.sameSite);
     }
 
     @Override
@@ -33,7 +36,7 @@ public class CookieConverter extends ConverterBase<Cookie> {
         }
 
         if (cookieMap.get("expires") != null) {
-            cookie.setExpires(timestampToEpoch(cookieMap.get("expires")));
+            cookie.setExpires(timestampToEpochTime(cookieMap.get("expires")));
         }
 
         if (cookieMap.get("httpOnly") != null) {
@@ -51,8 +54,12 @@ public class CookieConverter extends ConverterBase<Cookie> {
         return cookie;
     }
 
-    private double timestampToEpoch(String timestamp) {
-        return parse(timestamp, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")).toEpochSecond(ZoneOffset.UTC);
+    private double timestampToEpochTime(String timestamp) {
+        return parse(timestamp, dateTimeFormatter).toEpochSecond(ZoneOffset.UTC);
+    }
+
+    private String epochToString(double epochTime) {
+        return dateTimeFormatter.format(Instant.ofEpochSecond((long)epochTime));
     }
 
     private Map<String, String> getCookieMap(String s) {
