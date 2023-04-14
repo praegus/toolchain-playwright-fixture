@@ -5,14 +5,10 @@ import fitnesse.ContextConfigurator;
 import javax.inject.Inject;
 import java.nio.file.Path;
 
-public class FilesPath {
+public class WikiFilesPath {
 
     private static final String FITNESSE_DIR = "wiki";
     private static final Path wikiFilesDir = Path.of(ContextConfigurator.DEFAULT_ROOT, "files");
-
-    @Inject
-    public FilesPath() {
-    }
 
     /**
      * Method to get the path to the wiki files directory.

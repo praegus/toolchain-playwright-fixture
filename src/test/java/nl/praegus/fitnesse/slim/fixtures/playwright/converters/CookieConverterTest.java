@@ -12,8 +12,8 @@ class CookieConverterTest {
     private final String value = "42";
     private final String domain = ".praegus.nl";
     private final String path = "/";
-    private final double expiresEpochTime = 1681457828;
-    private final String expires = "2023-04-14 07:37:08";
+    private final long expiresEpochTime = 1681476043;
+    private final String expires = "2023-04-14T12:40:43Z";
     private final Boolean secure = true;
     private final Boolean httpOnly = true;
     private final SameSiteAttribute sameSiteAttribute = SameSiteAttribute.LAX;
@@ -27,7 +27,7 @@ class CookieConverterTest {
             .setSameSite(sameSiteAttribute);
 
     private final String cookieString = String.format("name=%s;value=%s;domain=%s;path=%s;expires=%s;secure=%s;httpOnly=%s;sameSite=%s",
-            name, value, domain, path, expires, secure, httpOnly, sameSiteAttribute.name());
+            name, value, domain, path, expires, secure, httpOnly, sameSiteAttribute);
 
     private final CookieConverter cookieConverter = new CookieConverter();
 

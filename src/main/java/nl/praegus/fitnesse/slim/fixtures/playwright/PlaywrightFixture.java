@@ -1,29 +1,15 @@
 package nl.praegus.fitnesse.slim.fixtures.playwright;
 
-import com.microsoft.playwright.*;
-import com.microsoft.playwright.assertions.LocatorAssertions;
-import com.microsoft.playwright.assertions.PageAssertions;
-import com.microsoft.playwright.options.*;
-import org.apache.commons.text.StringEscapeUtils;
-
-import javax.inject.Inject;
-import java.nio.file.Path;
-import java.time.Instant;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import static fitnesse.slim.SlimVersion.PRETTY_PRINT_TAG_END;
-import static fitnesse.slim.SlimVersion.PRETTY_PRINT_TAG_START;
 
 /**
  * FitNesse fixture enabling the use of the java-playwright api for browser automation
  *
  * @see <a href="https://playwright.dev/java/">Playwright Java documentation</a>.
  */
-public class PlaywrightFixture extends SlimFixtureBase {
+public class PlaywrightFixture extends PlaywrightFixtureBase {
 
-//    @Inject FilesPath filesPath;
+//    @Inject WikiFilesPath filesPath;
 //
 //    private final Browser browser = PlaywrightSetup.getBrowser(); //provider
 //    private final Browser.NewContextOptions newContextOptions = PlaywrightSetup.getNewContextOptions(); //provider

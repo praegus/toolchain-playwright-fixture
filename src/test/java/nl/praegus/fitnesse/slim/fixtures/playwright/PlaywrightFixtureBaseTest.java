@@ -11,15 +11,15 @@ import java.lang.reflect.Method;
 import nl.praegus.fitnesse.slim.fixtures.playwright.exceptions.PlaywrightFitnesseException;
 import org.junit.jupiter.api.Test;
 
-class SlimFixtureBaseTest {
+class PlaywrightFixtureBaseTest {
     /**
-     * Method under test: {@link SlimFixtureBase#aroundSlimInvoke(FixtureInteraction, Method, Object[])}
+     * Method under test: {@link PlaywrightFixtureBase#aroundSlimInvoke(FixtureInteraction, Method, Object[])}
      */
     @Test
     void testAroundSlimInvoke() throws InvocationTargetException {
-        SlimFixtureBase slimFixtureBase = new SlimFixtureBase();
+        PlaywrightFixtureBase playwrightFixtureBase = new PlaywrightFixtureBase();
         assertThrows(PlaywrightFitnesseException.class,
-                () -> slimFixtureBase.aroundSlimInvoke(new CachedInteraction(), null, "Arguments"));
+                () -> playwrightFixtureBase.aroundSlimInvoke(new CachedInteraction(), null, "Arguments"));
     }
 }
 

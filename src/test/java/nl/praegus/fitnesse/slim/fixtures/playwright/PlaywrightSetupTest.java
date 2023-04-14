@@ -15,18 +15,18 @@ class PlaywrightSetupTest {
     }
 
     @Test
-    void default_constructor_defaults_to_chromium() {
+    void default_constructor_inits_chromium() {
         var playwrightSetUp = new PlaywrightSetup();
         assertEquals(PlaywrightBrowserType.CHROMIUM.getName(), playwrightSetUp.browserType.name());
     }
 
     @Test
-    void constructor_arg_sets_browser_type() {
+    void constructor_arg_inits_given_browser_type() {
         var playwrightSetUp = new PlaywrightSetup("webkit");
         assertEquals(PlaywrightBrowserType.WEBKIT.getName(), playwrightSetUp.browserType.name());
     }
     @Test
     void unknown_browser_throws_unsupported_browser_exception(){
-        assertThrows(UnsupportedBrowserException.class, () -> new PlaywrightSetup("netscape"));
+        assertThrows(UnsupportedBrowserException.class, () -> new PlaywrightSetup("Netscape navigator"));
     }
 }

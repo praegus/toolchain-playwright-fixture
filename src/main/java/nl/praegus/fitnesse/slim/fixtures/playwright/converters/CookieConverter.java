@@ -3,15 +3,14 @@ package nl.praegus.fitnesse.slim.fixtures.playwright.converters;
 import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.SameSiteAttribute;
 import fitnesse.slim.converters.ConverterBase;
+import nl.praegus.fitnesse.slim.fixtures.playwright.exceptions.PlaywrightFitnesseException;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.time.LocalDateTime.parse;
-
 
 /**
  * Converter classes convert a string argument from the FitNesse wiki into a Java object.
@@ -35,17 +34,16 @@ import static java.time.LocalDateTime.parse;
  *       nicely encapsulated.
  * }
  * </pre>
- *
+ * <p>
  * This particular converter can be used to convert string into {@link Cookie} objects.
- *
  */
 public class CookieConverter extends ConverterBase<Cookie> {
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC);
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneOffset.UTC);
 
-        @Override
-    public String toString(Cookie c) {
+    @Override
+    public String toString(Cookie cookie) {
         return String.format("name=%s;value=%s;domain=%s;path=%s;expires=%s;secure=%s;httpOnly=%s;sameSite=%s",
-                c.name, c.value, c.domain, c.path, epochToString(c.expires), c.secure, c.httpOnly, c.sameSite);
+                cookie.name, cookie.value, cookie.domain, cookie.path, epochToString(cookie.expires), cookie.secure, cookie.httpOnly, cookie.sameSite);
     }
 
     @Override
@@ -77,16 +75,19 @@ public class CookieConverter extends ConverterBase<Cookie> {
         if (cookieMap.get("sameSite") != null) {
             cookie.setSameSite(SameSiteAttribute.valueOf(cookieMap.get("sameSite")));
         }
-
         return cookie;
     }
 
-    private double timestampToEpochTime(String timestamp) {
-        return parse(timestamp, dateTimeFormatter).toEpochSecond(ZoneOffset.UTC);
+    private long timestampToEpochTime(String timestamp) {
+        try {
+           return Instant.parse(timestamp).getEpochSecond();
+        } catch (DateTimeParseException exception) {
+            throw new PlaywrightFitnesseException("Provided timestamp should be formatted like: 2023-04-14T12:40:43Z");
+        }
     }
 
     private String epochToString(double epochTime) {
-        return dateTimeFormatter.format(Instant.ofEpochSecond((long)epochTime));
+        return dateTimeFormatter.format(Instant.ofEpochSecond((long) epochTime));
     }
 
     private Map<String, String> getCookieMap(String s) {

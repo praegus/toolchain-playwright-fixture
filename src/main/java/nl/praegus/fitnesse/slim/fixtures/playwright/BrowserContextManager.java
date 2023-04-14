@@ -16,8 +16,8 @@ public class BrowserContextManager {
     private final Browser browser;
     private final Browser.NewContextOptions newContextOptions;
     private BrowserContext browserContext;
-//    private final Path storageStateDir = SlimFixtureBase.getWikiFilesDir().resolve("storage-states");
-//    private final Path tracesDir = SlimFixtureBase.getWikiFilesDir().resolve("traces");
+//    private final Path storageStateDir = PlaywrightFixtureBase.getWikiFilesDir().resolve("storage-states");
+//    private final Path tracesDir = PlaywrightFixtureBase.getWikiFilesDir().resolve("traces");
 
     public BrowserContextManager(Browser currentBrowser, Browser.NewContextOptions currentNewContextOptions) {
         browser = currentBrowser;

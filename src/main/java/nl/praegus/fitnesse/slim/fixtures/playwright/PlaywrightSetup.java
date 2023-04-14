@@ -10,7 +10,7 @@ import nl.praegus.fitnesse.slim.fixtures.playwright.exceptions.UnsupportedBrowse
 
 import javax.inject.Inject;
 
-public final class PlaywrightSetup extends SlimFixtureBase {
+public final class PlaywrightSetup extends PlaywrightFixtureBase {
     @Inject
     Playwright playwright;
     @Inject
@@ -65,14 +65,17 @@ public final class PlaywrightSetup extends SlimFixtureBase {
         launchOptions.setHeadless(headless);
     }
 
+    public void closePlaywright() {
+        playwright.close();
+    }
+
+
+
     // For debugging
     @Deprecated
     public void nu() {
         browser.newContext().newPage().navigate("https://nu.nl");
     }
 
-    public void closePlaywright() {
-        playwright.close();
-    }
 }
 

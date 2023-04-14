@@ -7,7 +7,7 @@ import nl.praegus.fitnesse.slim.fixtures.playwright.exceptions.PlaywrightFitness
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class SlimFixtureBase implements InteractionAwareFixture {
+public class PlaywrightFixtureBase implements InteractionAwareFixture {
 
     @Override
     public Object aroundSlimInvoke(FixtureInteraction interaction, Method method, Object... arguments) throws InvocationTargetException {
