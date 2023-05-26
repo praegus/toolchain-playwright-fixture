@@ -365,6 +365,16 @@ public class PlaywrightFixture extends SlimFixtureBase {
         getLocator(selector).uncheck(new Locator.UncheckOptions().setForce(true));
     }
 
+    /**
+     * Returns the number of elements matching the locator.
+     *
+     * @param selector
+     * @return int number of times the given selector matches on the current page.
+     */
+    public int count(String selector) {
+        return getLocator(selector).count();
+    }
+
     //Keyboard interaction
 
     /**
