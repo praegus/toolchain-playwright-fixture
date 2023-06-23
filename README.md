@@ -1,6 +1,8 @@
 # ![Praegus_logo](https://avatars.githubusercontent.com/u/53261849?s=25&v=4) Praegus Toolchain Playwright Fixture
 
-[![maven version](https://img.shields.io/maven-central/v/nl.praegus/toolchain-playwright-fixture)](https://search.maven.org/search?q=nl.praegus/toolchain-playwright-fixture)
+[![maven version](https://img.shields.io/maven-central/v/nl.praegus/toolchain-playwright-fixture)](https://central.sonatype.com/search?q=nl.praegus/toolchain-playwright-fixture)
+
+[![Publish package to the Maven Central Repository](https://github.com/praegus/toolchain-playwright-fixture/actions/workflows/release-to-maven-central.yml/badge.svg)](https://github.com/praegus/toolchain-playwright-fixture/actions/workflows/release-to-maven-central.yml)
 
 A FitNesse fixture for writing browser tests using the [Playwright Java API](https://github.com/microsoft/playwright-java).
 Based on and inspired by the [HSAC fixtures.](https://github.com/fhoeben/hsac-fitnesse-fixtures)
@@ -16,7 +18,7 @@ This fixture requires **Java 11** or newer
 <dependency>
     <groupId>nl.praegus</groupId>
     <artifactId>toolchain-playwright-fixture</artifactId>
-    <version>1.4.0</version>
+    <version>1.6.3</version>
 </dependency>
 ```
 

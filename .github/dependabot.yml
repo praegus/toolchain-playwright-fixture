@@ -6,9 +6,8 @@ updates:
   - package-ecosystem: "maven"
     directory: "/" # Location of pom.xml
     schedule:
-      interval: "weekly"
-      day: "friday"
-      time: "09:45"
+      interval: "daily"
+      time: "05:00"
       timezone: "Europe/Amsterdam"
     allow:
       - dependency-name: "com.microsoft.playwright:playwright"
@@ -16,3 +15,4 @@ updates:
       - dependency-name: "org.fitnesse:fitnesse"
     assignees:
       - "joroelev"
+      - "McLFaberge"
