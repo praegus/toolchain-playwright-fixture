@@ -790,6 +790,54 @@ public class PlaywrightFixture extends SlimFixtureBase {
         return path.startsWith(getWikiFilesDir()) ? path.subpath(1, (path.getNameCount())) : path;
     }
 
+    //FrameLocator
+
+    /**
+     * Clicks on an element within a frame
+     * Usage: | click | [selector] | frame | [frame] |
+     *
+     * @param selector playwright selector to locate element to click on.
+     * @param frame    playwright selector to locate a frame.
+     */
+    public void clickFrame(String selector, String frame) {
+        getLocatorFrame(selector, frame).click();
+    }
+
+    /**
+     * Fills an element with given value within a frame.
+     * Usage: | enter | [value] | into | [selector] | frame | [frame] |
+     *
+     * @param value    value to enter
+     * @param selector playwright selector to locate element to enter data in
+     * @param frame    playwright selector to locate a frame.
+     */
+    public void enterIntoFrame(String value, String selector, String frame) {
+        getLocatorFrame(selector, frame).fill(value);
+    }
+
+    /**
+     * Waits for an element to be visible within a frame.
+     * Usage: | wait for visible | [selector] | frame | [frame] |
+     *
+     * @param selector playwright selector to locate element to wait for
+     * @param frame    playwright selector to locate a frame.
+     */
+    public void waitForVisibleFrame(String selector, String frame) {
+        getLocatorFrame(selector, frame).waitFor();
+    }
+
+    /**
+     * Checks if an element is visible in a frame.
+     * Usage: | is visible | [selector] | frame | [frame] |
+     *
+     * @param selector playwright selector to locating the element to check.
+     * @param frame    playwright selector to locate a frame.
+     * @return boolean indicating if the element is visible
+     */
+    public boolean isVisibleFrame(String selector, String frame) {
+        return getLocatorFrame(selector, frame).isVisible();
+    }
+
     //Debugging
 
     /**
@@ -1021,6 +1069,17 @@ public class PlaywrightFixture extends SlimFixtureBase {
      */
     private Locator getLocator(String selector) {
         return currentPage.locator(selector);
+    }
+
+    /**
+     * Helper function returning a Locator object based on a selector string within a frame.
+     *
+     * @param selector  playwright selector string
+     * @param frame     playwright selector to locate a frame.
+     * @return locator of an element on the current page
+     */
+    private Locator getLocatorFrame(String selector, String frame) {
+        return currentPage.frameLocator(frame).locator(selector);
     }
 
     /**
