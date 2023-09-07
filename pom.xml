@@ -47,6 +47,12 @@
             <organization>Praegus Solutions B.V.</organization>
             <organizationUrl>https://praegus.nl/solutions/</organizationUrl>
         </developer>
+        <developer>
+            <name>Michael de Lannoy</name>
+            <email>michael.de.lannoy@praegus.nl</email>
+            <organization>Praegus Connect B.V.</organization>
+            <organizationUrl>https://praegus.nl/connect/</organizationUrl>
+        </developer>
     </developers>
 
     <scm>
