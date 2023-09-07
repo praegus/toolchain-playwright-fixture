@@ -790,6 +790,158 @@ public class PlaywrightFixture extends SlimFixtureBase {
         return path.startsWith(getWikiFilesDir()) ? path.subpath(1, (path.getNameCount())) : path;
     }
 
+    //FrameLocator
+
+    /**
+     * Clicks on an element within a frame
+     * Usage: | click | [selector] | frame | [frame] |
+     *
+     * @param selector playwright selector to locate element to click on.
+     * @param frame    playwright selector to locate a frame.
+     */
+    public void clickFrame(String selector, String frame) {
+        getLocatorFrame(selector, frame).click();
+    }
+
+    /**
+     * Fills an element with given value within a frame.
+     * Usage: | enter | [value] | into | [selector] | frame | [frame] |
+     *
+     * @param value    value to enter
+     * @param selector playwright selector to locate element to enter data in
+     * @param frame    playwright selector to locate a frame.
+     */
+    public void enterIntoFrame(String value, String selector, String frame) {
+        getLocatorFrame(selector, frame).fill(value);
+    }
+
+    /**
+     * Waits for an element to be visible within a frame.
+     * Usage: | wait for visible | [selector] | frame | [frame] |
+     *
+     * @param selector playwright selector to locate element to wait for
+     * @param frame    playwright selector to locate a frame.
+     */
+    public void waitForVisibleFrame(String selector, String frame) {
+        getLocatorFrame(selector, frame).waitFor();
+    }
+
+    /**
+     * Checks if an element is visible within a frame.
+     * Usage: | is visible | [selector] | frame | [frame] |
+     *
+     * @param selector playwright selector to locating the element to check.
+     * @param frame    playwright selector to locate a frame.
+     * @return boolean indicating if the element is visible
+     */
+    public boolean isVisibleFrame(String selector, String frame) {
+        return getLocatorFrame(selector, frame).isVisible();
+    }
+
+    /**
+     * Checks if an element is hidden within a frame.
+     * Usage: | is hidden | [selector] | frame | [frame] |
+     *
+     * @param selector playwright selector to locating the element to check.
+     * @param frame    playwright selector to locate a frame.
+     * @return boolean indicating if the element is hidden
+     */
+    public boolean isHiddenFrame(String selector, String frame) {
+        return getLocatorFrame(selector, frame).isHidden();
+    }
+
+    /**
+     * Gets the value of an element within a frame.
+     *
+     * @param selector playwright selector to locate the element to get the value from
+     * @param frame    playwright selector to locate a frame
+     * @return value of the given element
+     */
+    public String valueOfFrame(String selector, String frame) {
+        String result;
+        switch (getLocatorFrame(selector, frame).evaluate("e => e.tagName", null, new Locator.EvaluateOptions()).toString().toLowerCase()) {
+            case "input":
+            case "textarea":
+            case "select":
+                result = getLocatorFrame(selector, frame).inputValue();
+                break;
+            case "button":
+            case "option":
+            case "text":
+                result = getLocatorFrame(selector, frame).innerHTML();
+                break;
+            default:
+                result = getLocatorFrame(selector, frame).innerText();
+        }
+        return result;
+    }
+
+    /**
+     * Gets the for whitespace normalized value of an element within a frame.
+     *
+     * @param selector playwright selector to locate the element to get the normalized value from
+     * @param frame    playwright selector to locate a frame
+     * @return for whitespace normalized value of the element
+     */
+    public String normalizedValueOfFrame(String selector, String frame) {
+        return getNormalizedText(valueOfFrame(selector, frame));
+    }
+
+    /**
+     * Selects option by given value in select element within a frame.
+     *
+     * @param value    string of value to select
+     * @param selector playwright selector to locate element to select option in
+     * @param frame    playwright selector to locate a frame
+     */
+    public void selectValueInFrame(String value, String selector, String frame) {
+        getLocatorFrame(selector, frame).selectOption(value);
+    }
+
+    /**
+     * Selects option by given label in a select element within a frame.
+     *
+     * @param value    string of label to select
+     * @param selector playwright selector to locate element to select option in
+     * @param frame    playwright selector to locate a frame
+     */
+    public void selectLabelInFrame(String value, String selector, String frame) {
+        getLocatorFrame(selector, frame).selectOption(new SelectOption().setLabel(value));
+    }
+
+    /**
+     * Selects option by index in select element within a frame.
+     *
+     * @param index    index of option to select
+     * @param selector playwright selector to locate element to select option in
+     * @param frame    playwright selector to locate a frame
+     */
+    public void selectIndexInFrame(int index, String selector, String frame) {
+        getLocatorFrame(selector, frame).selectOption(new SelectOption().setIndex(index));
+    }
+
+    /**
+     * Checks if an element is checked within a frame.
+     *
+     * @param selector playwright selector to locating the element to check.
+     * @param frame    playwright selector to locate a frame
+     * @return boolean indicating if the element is checked
+     */
+    public boolean isCheckedFrame(String selector, String frame) {
+        return getLocatorFrame(selector, frame).isChecked();
+    }
+
+    /**
+     * Returns the number of elements matching the locator within a frame.
+     *
+     * @param selector playwright selector to count
+     * @param frame    playwright selector to locate a frame
+     * @return int number of times the given selector matches on the current page.
+     */
+    public int countFrame(String selector, String frame) {
+        return getLocatorFrame(selector, frame).count();
+    }
+
     //Debugging
 
     /**
@@ -1021,6 +1173,17 @@ public class PlaywrightFixture extends SlimFixtureBase {
      */
     private Locator getLocator(String selector) {
         return currentPage.locator(selector);
+    }
+
+    /**
+     * Helper function returning a Locator object based on a selector string within a frame.
+     *
+     * @param selector  playwright selector string
+     * @param frame     playwright selector to locate a frame.
+     * @return locator of an element on the current page
+     */
+    private Locator getLocatorFrame(String selector, String frame) {
+        return currentPage.frameLocator(frame).locator(selector);
     }
 
     /**
