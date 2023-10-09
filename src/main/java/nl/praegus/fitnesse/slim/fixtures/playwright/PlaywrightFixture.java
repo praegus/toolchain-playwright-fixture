@@ -667,22 +667,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @return value of the given element
      */
     public String valueOf(String selector) {
-        String result;
-        switch (getLocator(selector).evaluate("e => e.tagName", null, new Locator.EvaluateOptions()).toString().toLowerCase()) {
-            case "input":
-            case "textarea":
-            case "select":
-                result = getLocator(selector).inputValue();
-                break;
-            case "button":
-            case "option":
-            case "text":
-                result = getLocator(selector).innerHTML();
-                break;
-            default:
-                result = getLocator(selector).innerText();
-        }
-        return result;
+        return valueOfFrame(selector, "");
     }
 
     /**
@@ -800,7 +785,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param frame    playwright selector to locate a frame.
      */
     public void clickFrame(String selector, String frame) {
-        getLocatorFrame(selector, frame).click();
+        getLocator(selector, frame).click();
     }
 
     /**
@@ -812,7 +797,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param frame    playwright selector to locate a frame.
      */
     public void enterIntoFrame(String value, String selector, String frame) {
-        getLocatorFrame(selector, frame).fill(value);
+        getLocator(selector, frame).fill(value);
     }
 
     /**
@@ -823,7 +808,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param frame    playwright selector to locate a frame.
      */
     public void waitForVisibleFrame(String selector, String frame) {
-        getLocatorFrame(selector, frame).waitFor();
+        getLocator(selector, frame).waitFor();
     }
 
     /**
@@ -835,7 +820,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @return boolean indicating if the element is visible
      */
     public boolean isVisibleFrame(String selector, String frame) {
-        return getLocatorFrame(selector, frame).isVisible();
+        return getLocator(selector, frame).isVisible();
     }
 
     /**
@@ -847,7 +832,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @return boolean indicating if the element is hidden
      */
     public boolean isHiddenFrame(String selector, String frame) {
-        return getLocatorFrame(selector, frame).isHidden();
+        return getLocator(selector, frame).isHidden();
     }
 
     /**
@@ -859,19 +844,19 @@ public class PlaywrightFixture extends SlimFixtureBase {
      */
     public String valueOfFrame(String selector, String frame) {
         String result;
-        switch (getLocatorFrame(selector, frame).evaluate("e => e.tagName", null, new Locator.EvaluateOptions()).toString().toLowerCase()) {
+        switch (getLocator(selector, frame).evaluate("e => e.tagName", null, new Locator.EvaluateOptions()).toString().toLowerCase()) {
             case "input":
             case "textarea":
             case "select":
-                result = getLocatorFrame(selector, frame).inputValue();
+                result = getLocator(selector, frame).inputValue();
                 break;
             case "button":
             case "option":
             case "text":
-                result = getLocatorFrame(selector, frame).innerHTML();
+                result = getLocator(selector, frame).innerHTML();
                 break;
             default:
-                result = getLocatorFrame(selector, frame).innerText();
+                result = getLocator(selector, frame).innerText();
         }
         return result;
     }
@@ -895,7 +880,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param frame    playwright selector to locate a frame
      */
     public void selectValueInFrame(String value, String selector, String frame) {
-        getLocatorFrame(selector, frame).selectOption(value);
+        getLocator(selector, frame).selectOption(value);
     }
 
     /**
@@ -906,7 +891,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param frame    playwright selector to locate a frame
      */
     public void selectLabelInFrame(String value, String selector, String frame) {
-        getLocatorFrame(selector, frame).selectOption(new SelectOption().setLabel(value));
+        getLocator(selector, frame).selectOption(new SelectOption().setLabel(value));
     }
 
     /**
@@ -917,7 +902,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param frame    playwright selector to locate a frame
      */
     public void selectIndexInFrame(int index, String selector, String frame) {
-        getLocatorFrame(selector, frame).selectOption(new SelectOption().setIndex(index));
+        getLocator(selector, frame).selectOption(new SelectOption().setIndex(index));
     }
 
     /**
@@ -928,7 +913,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @return boolean indicating if the element is checked
      */
     public boolean isCheckedFrame(String selector, String frame) {
-        return getLocatorFrame(selector, frame).isChecked();
+        return getLocator(selector, frame).isChecked();
     }
 
     /**
@@ -939,7 +924,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @return int number of times the given selector matches on the current page.
      */
     public int countFrame(String selector, String frame) {
-        return getLocatorFrame(selector, frame).count();
+        return getLocator(selector, frame).count();
     }
 
     //Debugging
@@ -1182,8 +1167,8 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param frame     playwright selector to locate a frame.
      * @return locator of an element on the current page
      */
-    private Locator getLocatorFrame(String selector, String frame) {
-        return currentPage.frameLocator(frame).locator(selector);
+    private Locator getLocator(String selector, String frame) {
+        return (frame.isEmpty()) ? getLocator(selector) : currentPage.frameLocator(frame).locator(selector);
     }
 
     /**
