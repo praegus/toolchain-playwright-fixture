@@ -19,7 +19,7 @@
         <dependency>
             <groupId>org.fitnesse</groupId>
             <artifactId>fitnesse</artifactId>
-            <version>20221219</version>
+            <version>20230503</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -46,6 +46,12 @@
             <email>johan.roeleveld@praegus.nl</email>
             <organization>Praegus Solutions B.V.</organization>
             <organizationUrl>https://praegus.nl/solutions/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Michael de Lannoy</name>
+            <email>michael.de.lannoy@praegus.nl</email>
+            <organization>Praegus Connect B.V.</organization>
+            <organizationUrl>https://praegus.nl/connect/</organizationUrl>
         </developer>
     </developers>
 
