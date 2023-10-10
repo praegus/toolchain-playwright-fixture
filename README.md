@@ -18,7 +18,7 @@ This fixture requires **Java 11** or newer
 <dependency>
     <groupId>nl.praegus</groupId>
     <artifactId>toolchain-playwright-fixture</artifactId>
-    <version>1.6.3</version>
+    <version>1.7.0</version>
 </dependency>
 ```
 
