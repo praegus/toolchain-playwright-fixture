@@ -9,7 +9,6 @@ import com.microsoft.playwright.options.SelectOption;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import org.apache.commons.text.StringEscapeUtils;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -92,16 +91,6 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     /**
-     * Switches to the previous tab
-     *
-     * @deprecated renamed. Use {@link PlaywrightFixture#switchToPrecedingTab()}.
-     */
-    @Deprecated(since = "1.4.0")
-    public void switchToPreviousTab() {
-        switchToPrecedingTab();
-    }
-
-    /**
      * Switches to preceding tab.
      *
      * @throws PlaywrightFitnesseException when no preceding tab is found
@@ -111,20 +100,6 @@ public class PlaywrightFixture extends SlimFixtureBase {
             throw new PlaywrightFitnesseException("Exception: preceding tab not found.");
         }
         currentPage = getPageList().get(getPageIndex(currentPage) - 1);
-    }
-
-    /**
-     * Closes the currently active tab.
-     *
-     * @deprecated unneeded convenience method. Use {@link PlaywrightFixture#switchToPrecedingTab} and
-     * {@link PlaywrightFixture#closeNextTab()} instead.
-     * Also works only when a previous tab is present.
-     */
-    @Deprecated(since = "1.4.0")
-    public void closeCurrentTab() {
-        var tabToCloseIndex = getPageIndex(currentPage);
-        switchToPreviousTab();
-        getPageList().get(tabToCloseIndex).close();
     }
 
     /**
@@ -179,18 +154,6 @@ public class PlaywrightFixture extends SlimFixtureBase {
      */
     public Map<String, String> getCookies() {
         return cookieManager.getCookies(browserContext);
-    }
-
-    /**
-     * Set multiple cookies at once
-     *
-     * @param cookiesList list of cookieMaps
-     * @deprecated creating a list of maps in FitNesse is not very convenient. Adding the cookies to a context one by
-     * one using {@link PlaywrightFixture#setCookie(Map)} requires the same or smaller amount of code.
-     */
-    @Deprecated(since = "1.4.0")
-    public void setCookies(List<Map<String, String>> cookiesList) {
-        cookieManager.setCookies(cookiesList, browserContext);
     }
 
     /**
@@ -276,17 +239,6 @@ public class PlaywrightFixture extends SlimFixtureBase {
         for (int i = 0; i < times; i++) {
             this.click(selector);
         }
-    }
-
-    /**
-     * Clicks an element and then waits for navigation to complete.
-     *
-     * @param selector playwright selector to locate element to click on
-     * @deprecated use assertions after clicking an element to check if the expected navigation has been completed.
-     */
-    @Deprecated(since = "1.4.0")
-    public void clickAndWaitForNavigation(String selector) {
-        currentPage.waitForNavigation(() -> this.click(selector));
     }
 
     /**
@@ -1038,22 +990,6 @@ public class PlaywrightFixture extends SlimFixtureBase {
      */
     public void saveTrace(String name) {
         browserContext.tracing().stop(new Tracing.StopOptions().setPath(Paths.get(tracesDir + "/" + name + ".zip")));
-    }
-
-    /**
-     * Opens a trace file.
-     *
-     * @deprecated Does not work properly. Not all images are loaded. Using
-     * mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="show-trace trace.zip" is preferred.
-     *
-     * @param name name of the trace to open.
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    @Deprecated(since = "1.4.0")
-    public void openTrace(String name) throws IOException, InterruptedException {
-        String[] args = {"show-trace", tracesDir + "/" + name + ".zip"};
-        CLI.main(args);
     }
 
     //Network
