@@ -7,7 +7,7 @@
     <url>https://github.com/praegus/toolchain-playwright-fixture</url>
     <name>Praegus Toolchain Playwright Fixture</name>
     <description>A FitNesse fixture for writing browser tests using the Playwright Java API</description>
-    <version>1.6.4-SNAPSHOT</version>
+    <version>1.7.2-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,13 +19,13 @@
         <dependency>
             <groupId>org.fitnesse</groupId>
             <artifactId>fitnesse</artifactId>
-            <version>20221219</version>
+            <version>20230503</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.microsoft.playwright</groupId>
             <artifactId>playwright</artifactId>
-            <version>1.35.1</version>
+            <version>1.39.0</version>
         </dependency>
     </dependencies>
 
@@ -46,6 +46,12 @@
             <email>johan.roeleveld@praegus.nl</email>
             <organization>Praegus Solutions B.V.</organization>
             <organizationUrl>https://praegus.nl/solutions/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Michael de Lannoy</name>
+            <email>michael.de.lannoy@praegus.nl</email>
+            <organization>Praegus Connect B.V.</organization>
+            <organizationUrl>https://praegus.nl/connect/</organizationUrl>
         </developer>
     </developers>
 
