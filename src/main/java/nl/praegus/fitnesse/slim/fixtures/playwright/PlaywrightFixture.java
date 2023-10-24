@@ -402,7 +402,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param selector playwright selector to locate the element to type into
      */
     public void typeIn(String text, String selector) {
-        getLocator(selector).type(text, new Locator.TypeOptions().setDelay(200));
+        getLocator(selector).pressSequentially(text, new Locator.PressSequentiallyOptions().setDelay(200));
     }
 
     //Waiting stuff
