@@ -559,7 +559,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Asserts that the page has a given url before the timeout expires.
      *
-     * @param url expected url
+     * @param url     expected url
      * @param timeout timeout in milliseconds
      */
     public void assertThatPageHasUrlWithTimeout(String url, double timeout) {
@@ -578,7 +578,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Asserts that the page doen not have a given url before the timeout expires.
      *
-     * @param url url the page should not have
+     * @param url     url the page should not have
      * @param timeout timeout in milliseconds
      */
     public void assertThatPageHasNotUrlWithTimeout(String url, double timeout) {
@@ -590,7 +590,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      *
      * @param title expected title
      */
-    public void assertThatPageHasTitle(String title){
+    public void assertThatPageHasTitle(String title) {
         assertThat(currentPage).hasTitle(title);
     }
 
@@ -638,7 +638,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Checks if clicking an element opens a new tab with given url.
      *
      * @param selector Playwright selector to locating the element to click
-     * @param url url to be opened in new tab
+     * @param url      url to be opened in new tab
      * @return boolean indicating if the new tab was opened with the given url
      */
     public boolean clickOnOpensTabWithUrl(String selector, String url) {
@@ -649,7 +649,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Checks that clicking an element opens a new tab with given url, else an exception is thrown.
      *
      * @param selector Playwright selector to locate the element
-     * @param url url to be opened in new tab
+     * @param url      url to be opened in new tab
      * @return boolean indicating that the new tab was opened with the given url
      */
     public boolean clickOnAndWaitOpensTabWithUrl(String selector, String url) {
@@ -674,7 +674,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Gets the value of a given attribute for an element.
      *
      * @param attributeName attribute to get the value from
-     * @param selector Playwright selector to locate the element to get the attribute value from
+     * @param selector      Playwright selector to locate the element to get the attribute value from
      * @return value of the given attribute
      */
     public String valueOfAttributeForSelector(String attributeName, String selector) {
@@ -740,7 +740,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @return location of the screenshot as a html link
      */
     public String takeScreenshot(String baseName) {
-        var screenshotFile = screenshotsDir.resolve(baseName);
+        var screenshotFile = getScreenshotsDirectory().resolve(baseName);
         currentPage.screenshot(new Page.ScreenshotOptions().setPath(screenshotFile).setFullPage(true));
         return getScreenshotLink(screenshotFile);
     }
@@ -1043,12 +1043,11 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Opens a trace file.
      *
-     * @deprecated Does not work properly. Not all images are loaded. Using
-     * mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="show-trace trace.zip" is preferred.
-     *
      * @param name name of the trace to open.
      * @throws IOException
      * @throws InterruptedException
+     * @deprecated Does not work properly. Not all images are loaded. Using
+     * mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="show-trace trace.zip" is preferred.
      */
     @Deprecated(since = "1.4.0")
     public void openTrace(String name) throws IOException, InterruptedException {
@@ -1061,7 +1060,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Opens a page and waits for a response from another server.
      *
-     * @param openUrl url to open.
+     * @param openUrl     url to open.
      * @param responseUrl url that should be called during loading of the page.
      */
     public void openAndWaitForResponseFromUrl(String openUrl, String responseUrl) {
@@ -1073,7 +1072,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Clicks an element and waits for a response from a given url.
      *
      * @param selector Playwright selector to locate element to click on.
-     * @param url url that should respond after clicking
+     * @param url      url that should respond after clicking
      */
     public void clickAndWaitForResponseFromUrl(String selector, String url) {
         currentPage.waitForResponse(url, () -> this.click(selector));
@@ -1092,7 +1091,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Selects an element and waits for a response from a given url.
      *
      * @param selector Playwright selector to locate element to select.
-     * @param url url that should respond after selecting
+     * @param url      url that should respond after selecting
      */
     public void selectAndWaitForResponseFromUrl(String selector, String url) {
         currentPage.waitForResponse(Pattern.compile(url), () -> this.selectCheckbox(selector));
@@ -1109,9 +1108,10 @@ public class PlaywrightFixture extends SlimFixtureBase {
 
     /**
      * Enters and value into an element and waits for a response from a given url.
-     * @param value value to enter
+     *
+     * @param value    value to enter
      * @param selector Playwright selector to locate element to enter the value into.
-     * @param url url that should respond after entering the value
+     * @param url      url that should respond after entering the value
      */
     public void enterIntoAndWaitForResponseFromUrl(String value, String selector, String url) {
         currentPage.waitForResponse(url, () -> this.enterInto(value, selector));
@@ -1130,7 +1130,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Mocks an endpoint to return a given body.
      *
-     * @param url url to mock
+     * @param url  url to mock
      * @param body response body to return when mocked url is called.
      */
     public void setUrlToReturnBody(String url, String body) {
@@ -1163,8 +1163,8 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Helper function returning a Locator object based on a selector string within a frame.
      *
-     * @param selector  playwright selector string
-     * @param frame     playwright selector to locate a frame.
+     * @param selector playwright selector string
+     * @param frame    playwright selector to locate a frame.
      * @return locator of an element on the current page
      */
     private Locator getLocator(String selector, String frame) {
@@ -1219,5 +1219,10 @@ public class PlaywrightFixture extends SlimFixtureBase {
     protected String getExceptionMessageWithScreenshot(Throwable t) {
         return String.format("%s<div style=\"border-style:none\"><p style=\"border-style:none\" >%s</p>%s</div>%s",
                 PRETTY_PRINT_TAG_START, StringEscapeUtils.escapeHtml4(t.getMessage()), takeScreenshot(), PRETTY_PRINT_TAG_END);
+    }
+
+    private Path getScreenshotsDirectory() {
+        String dir = System.getProperty("pwScreenshotsDir");
+        return dir == null || dir.isEmpty() ? this.screenshotsDir : Paths.get(dir);
     }
 }
