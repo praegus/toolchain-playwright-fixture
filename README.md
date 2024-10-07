@@ -12,13 +12,14 @@ Only a subset of the available Playwright commands is currently implemented in t
 This fixture requires **Java 11** or newer
 
 ## Getting started
+- Make sure the HSAC fixtures are present in your project
 - Add the fixture as Maven dependency to your FitNesse project.
 
 ```xml
 <dependency>
     <groupId>nl.praegus</groupId>
     <artifactId>toolchain-playwright-fixture</artifactId>
-    <version>1.7.0</version>
+    <version>1.8.1</version>
 </dependency>
 ```
 

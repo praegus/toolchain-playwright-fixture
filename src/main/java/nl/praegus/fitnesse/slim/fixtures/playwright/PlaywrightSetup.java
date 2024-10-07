@@ -5,17 +5,19 @@ import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.ColorScheme;
 import com.microsoft.playwright.options.Proxy;
+import nl.hsac.fitnesse.fixture.slim.SlimFixture;
+import nl.hsac.fitnesse.fixture.slim.SlimFixtureException;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.Map;
 
-public final class PlaywrightSetup extends SlimFixtureBase {
+public final class PlaywrightSetup extends SlimFixture {
     private static final Playwright playwright = Playwright.create();
     private static Browser browser;
     private static final BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions();
     private static final Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions();
-    private final Path harDir = getWikiFilesDir().resolve("har");
+    private final File harDir = new File(getEnvironment().getFitNesseFilesSectionDir(), "har");
 
     public static void configureProxy(String server) {
         launchOptions.setProxy(new Proxy(server));
@@ -33,7 +35,7 @@ public final class PlaywrightSetup extends SlimFixtureBase {
                 browser = playwright.webkit().launch(launchOptions);
                 break;
             default:
-                throw new PlaywrightFitnesseException("Unsupported browser name. Use Chromium, Firefox or Webkit!");
+                throw new SlimFixtureException("Unsupported browser name. Use Chromium, Firefox or Webkit!");
         }
     }
 
