@@ -7,8 +7,10 @@ import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.SelectOption;
 import com.microsoft.playwright.options.WaitForSelectorState;
-import org.apache.commons.text.StringEscapeUtils;
+import nl.hsac.fitnesse.fixture.slim.SlimFixture;
+import nl.hsac.fitnesse.fixture.slim.SlimFixtureException;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,20 +20,20 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import static fitnesse.slim.SlimVersion.PRETTY_PRINT_TAG_END;
-import static fitnesse.slim.SlimVersion.PRETTY_PRINT_TAG_START;
 
 /**
  * FitNesse fixture enabling the use of the java-playwright api for browser automation
  *
  * @see <a href="https://playwright.dev/java/">Playwright Java documentation</a>.
  */
-public class PlaywrightFixture extends SlimFixtureBase {
+public class PlaywrightFixture extends SlimFixture {
     private final Browser browser = PlaywrightSetup.getBrowser();
     private final CookieManager cookieManager = new CookieManager();
-    private final Path screenshotsDir = getWikiFilesDir().resolve("screenshots");
-    private final Path tracesDir = getWikiFilesDir().resolve("traces");
-    private final Path storageStateDir = getWikiFilesDir().resolve("storage-states");
+    private final File screenshotFolder = new File(getEnvironment().getFitNesseFilesSectionDir(), "screenshots");
+    private final File tracesFolder = new File(getEnvironment().getFitNesseFilesSectionDir(), "traces");
+    private final File storageStateFolder = new File(getEnvironment().getFitNesseFilesSectionDir(), "storage-states");
+
+
     private BrowserContext browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions());
     private Page currentPage = browserContext.newPage();
     private String storageState;
@@ -82,11 +84,11 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Switches to next tab.
      *
-     * @throws PlaywrightFitnesseException when no next tab is found
+     * @throws SlimFixtureException when no next tab is found
      */
     public void switchToNextTab() {
         if (isLastPage(currentPage)) {
-            throw new PlaywrightFitnesseException("Exception: Next tab not found.");
+            throw new SlimFixtureException("Exception: Next tab not found.");
         }
         currentPage = getPageList().get(getPageIndex(currentPage) + 1);
     }
@@ -104,11 +106,11 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Switches to preceding tab.
      *
-     * @throws PlaywrightFitnesseException when no preceding tab is found
+     * @throws SlimFixtureException when no preceding tab is found
      */
     public void switchToPrecedingTab() {
         if (isFirstPage(currentPage)) {
-            throw new PlaywrightFitnesseException("Exception: preceding tab not found.");
+            throw new SlimFixtureException("Exception: preceding tab not found.");
         }
         currentPage = getPageList().get(getPageIndex(currentPage) - 1);
     }
@@ -130,11 +132,11 @@ public class PlaywrightFixture extends SlimFixtureBase {
     /**
      * Closes the next tab
      *
-     * @throws PlaywrightFitnesseException if no next page is present
+     * @throws SlimFixtureException if no next page is present
      */
     public void closeNextTab() {
         if (isLastPage(currentPage)) {
-            throw new PlaywrightFitnesseException("Exception: no next tab found");
+            throw new SlimFixtureException("Exception: no next tab found");
         }
         getPageList().get(getPageIndex(currentPage) + 1).close();
     }
@@ -149,24 +151,24 @@ public class PlaywrightFixture extends SlimFixtureBase {
      *
      *                  <p>
      *                  <pre>
-     *                  {@code
+     *                                                    {@code
      *
-     *                  |ddt:map fixture                                                         |
-     *                  |name|value|expires         |domain|path|secure|httpOnly|sameSite|cookie?|
-     *                  |test|yes  |2023-12-31 00:00|.c.com|/   |false |false   |true    |$var=  |
+     *                                                    |ddt:map fixture                                                         |
+     *                                                    |name|value|expires         |domain|path|secure|httpOnly|sameSite|cookie?|
+     *                                                    |test|yes  |2023-12-31 00:00|.c.com|/   |false |false   |true    |$var=  |
      *
-     *                  } </pre>
+     *                                                    } </pre>
      *                  <p>
      *                  The cookie can then be used in a script like this
      *
      *                  <pre>
-     *                  {@code
+     *                                                    {@code
      *
-     *                  |script| playwright fixture |
-     *                  |set cookie | $var          |
+     *                                                    |script| playwright fixture |
+     *                                                    |set cookie | $var          |
      *
-     *                  }
-     *                  </pre>
+     *                                                    }
+     *                                                    </pre>
      */
     public void setCookie(Map<String, String> cookieMap) {
         cookieManager.setCookie(cookieMap, browserContext);
@@ -521,7 +523,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Asserts that an element contains a given text.
      *
      * @param selector Playwright selector to locate element that contains text
-     * @param value string that should be present in element
+     * @param value    string that should be present in element
      */
     public void assertThatContainsText(String selector, String value) {
         assertThat(getLocator(selector)).containsText(value);
@@ -529,8 +531,9 @@ public class PlaywrightFixture extends SlimFixtureBase {
 
     /**
      * Asserts that an element has a given value.
+     *
      * @param selector Playwright selector to locate element that should have a value
-     * @param value value that should be present in element
+     * @param value    value that should be present in element
      */
     public void assertThatHasValue(String selector, String value) {
         assertThat(getLocator(selector)).hasValue(value);
@@ -540,8 +543,8 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * Asserts that an element has a given value before the timeout expires.
      *
      * @param selector Playwright selector to locate element that should have a value
-     * @param value value that should be present in element
-     * @param timeout timeout in milliseconds
+     * @param value    value that should be present in element
+     * @param timeout  timeout in milliseconds
      */
     public void assertThatHasValueWithTimeout(String selector, String value, double timeout) {
         assertThat(getLocator(selector)).hasValue(value, new LocatorAssertions.HasValueOptions().setTimeout(timeout));
@@ -740,9 +743,12 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @return location of the screenshot as a html link
      */
     public String takeScreenshot(String baseName) {
-        var screenshotFile = getScreenshotsDirectory().resolve(baseName);
-        currentPage.screenshot(new Page.ScreenshotOptions().setPath(screenshotFile).setFullPage(true));
-        return getScreenshotLink(screenshotFile);
+        var screenshotFile = new File(screenshotFolder, baseName + ".png");
+        currentPage.screenshot(new Page.ScreenshotOptions().setPath(screenshotFile.toPath()).setFullPage(true));
+
+        return String.format("<a href=\"%1$s\" target=\"_blank\"><img src=\"%1$s\" title=\"%2$s\" height=\"%3$s\"/></a>",
+                getWikiUrl(screenshotFile.getAbsolutePath()), baseName, 400);
+
     }
 
     /**
@@ -755,24 +761,13 @@ public class PlaywrightFixture extends SlimFixtureBase {
     }
 
     /**
-     * Gets the html link for a given screenshot path.
-     *
-     * @param screenshotFilePath
-     * @return html link to screenshot
-     */
-    private String getScreenshotLink(Path screenshotFilePath) {
-        return String.format("<a href=\"%1$s\" target=\"_blank\" style=\"border-style:none\"><img src=\"%1$s\" title=\"%2$s\" height=\"%3$s\" style=\"border-style:none\"/></a>",
-                getWikiPath(screenshotFilePath), screenshotFilePath.getFileName(), 400);
-    }
-
-    /**
      * Converts a file path into a relative wiki path, if the path is insides the wiki's 'files' section.
      *
      * @param path path to file.
      * @return relative URL pointing to the file (so a hyperlink to it can be created).
      */
     public Path getWikiPath(Path path) {
-        return path.startsWith(getWikiFilesDir()) ? path.subpath(1, (path.getNameCount())) : path;
+        return path.startsWith(getEnvironment().getFitNesseFilesSectionDir()) ? path.subpath(1, (path.getNameCount())) : path;
     }
 
     //FrameLocator
@@ -989,7 +984,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param name name of the json file without extension
      */
     public void saveStorageStateToFile(String name) {
-        browserContext.storageState(new BrowserContext.StorageStateOptions().setPath(Paths.get(storageStateDir + "/" + name + ".json")));
+        browserContext.storageState(new BrowserContext.StorageStateOptions().setPath(Paths.get(storageStateFolder + "/" + name + ".json")));
     }
 
     /**
@@ -1016,9 +1011,10 @@ public class PlaywrightFixture extends SlimFixtureBase {
      */
     public void openNewContextWithSavedStorageStateFromFile(String name) {
         try {
-            browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions().setStorageStatePath(Paths.get(storageStateDir + "/" + name + ".json")));
+            browserContext = browser.newContext(PlaywrightSetup.getNewContextOptions().setStorageStatePath(Paths.get(storageStateFolder + "/" + name + ".json")));
+
         } catch (Exception e) {
-            throw new PlaywrightFitnesseException(e.getMessage());
+            throw new SlimFixtureException(e.getMessage());
         }
     }
 
@@ -1037,7 +1033,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      * @param name name of the trace file
      */
     public void saveTrace(String name) {
-        browserContext.tracing().stop(new Tracing.StopOptions().setPath(Paths.get(tracesDir + "/" + name + ".zip")));
+        browserContext.tracing().stop(new Tracing.StopOptions().setPath(Paths.get(tracesFolder + "/" + name + ".zip")));
     }
 
     /**
@@ -1051,7 +1047,7 @@ public class PlaywrightFixture extends SlimFixtureBase {
      */
     @Deprecated(since = "1.4.0")
     public void openTrace(String name) throws IOException, InterruptedException {
-        String[] args = {"show-trace", tracesDir + "/" + name + ".zip"};
+        String[] args = {"show-trace", tracesFolder + "/" + name + ".zip"};
         CLI.main(args);
     }
 
@@ -1209,20 +1205,5 @@ public class PlaywrightFixture extends SlimFixtureBase {
      */
     private boolean isLastPage(Page page) {
         return getPageIndex(page) == getPageList().size() - 1;
-    }
-
-    @Override
-    protected Throwable handleException(Throwable t) {
-        return (currentPage == null || browserContext == null) ? t : new PlaywrightFitnesseException(getExceptionMessageWithScreenshot(t));
-    }
-
-    protected String getExceptionMessageWithScreenshot(Throwable t) {
-        return String.format("%s<div style=\"border-style:none\"><p style=\"border-style:none\" >%s</p>%s</div>%s",
-                PRETTY_PRINT_TAG_START, StringEscapeUtils.escapeHtml4(t.getMessage()), takeScreenshot(), PRETTY_PRINT_TAG_END);
-    }
-
-    private Path getScreenshotsDirectory() {
-        String dir = System.getProperty("pwScreenshotsDir");
-        return dir == null || dir.isEmpty() ? this.screenshotsDir : Paths.get(dir);
     }
 }
