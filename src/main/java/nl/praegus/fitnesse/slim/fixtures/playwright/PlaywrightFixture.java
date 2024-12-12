@@ -249,6 +249,15 @@ public class PlaywrightFixture extends SlimFixture {
     }
 
     /**
+     * Force clicks on an element
+     *
+     * @param selector playwright selector to locate element and bypass the actionability checks and force the click.
+     */
+    public void forceClick(String selector) {
+        getLocator(selector).click(new Locator.ClickOptions().setForce(true));
+    }
+
+    /**
      * Click on an element located by ARIA role and accessible name.
      *
      * @param role ARIA role
