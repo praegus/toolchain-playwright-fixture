@@ -84,6 +84,10 @@ public final class PlaywrightSetup extends SlimFixture {
         newContextOptions.setExtraHTTPHeaders(extraHTTPHeaders);
     }
 
+    public void SetIgnoreHttpsErrors(Boolean ignoreHttps) {
+        newContextOptions.setIgnoreHTTPSErrors(ignoreHttps);
+    }
+
     public void setBaseUrl(String baseUrl) {
         newContextOptions.setBaseURL(baseUrl);
     }
