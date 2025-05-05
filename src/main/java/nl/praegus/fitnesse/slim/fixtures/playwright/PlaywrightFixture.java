@@ -116,6 +116,16 @@ public class PlaywrightFixture extends SlimFixture {
     }
 
     /**
+     * Switches to an indicated page using page index.
+     * Usage: | switch to page index | pageIndex |
+     *
+     * @param pageIndex    Page index of the page to switch to
+     */
+    public void switchToPage(int pageIndex) {
+        currentPage = getPageList().get(pageIndex);
+    }
+
+    /**
      * Closes the currently active tab.
      *
      * @deprecated unneeded convenience method. Use {@link PlaywrightFixture#switchToPrecedingTab} and
@@ -307,6 +317,18 @@ public class PlaywrightFixture extends SlimFixture {
      */
     public void doubleClick(String selector) {
         getLocator(selector).dblclick();
+    }
+
+    /**
+     * Clicks an element only when element is visible.
+     * Usage: | click if available | [selector] |
+     *
+     * @param selector playwright selector to locate element to click on
+     */
+    public void clickIfAvailable(String selector) {
+        if (isVisible(selector)){
+            click(selector);
+        }
     }
 
     /**
@@ -793,6 +815,19 @@ public class PlaywrightFixture extends SlimFixture {
     }
 
     /**
+     * Clicks an element within a frame only when element is visible.
+     * Usage: | click if available | [selector] | frame | [frame] |
+     *
+     * @param selector playwright selector to locate element to click on.
+     * @param frame    playwright selector to locate a frame.
+     */
+    public void clickIfAvailableFrame(String selector, String frame) {
+        if (isVisibleFrame(selector, frame)){
+            clickFrame(selector, frame);
+        }
+    }
+
+    /**
      * Fills an element with given value within a frame.
      * Usage: | enter | [value] | into | [selector] | frame | [frame] |
      *
@@ -950,6 +985,15 @@ public class PlaywrightFixture extends SlimFixture {
     public String getCurrentPage() {
         return currentPage.toString();
     }
+
+    /**
+     * Gets current page index.
+     * Usage: | show | get current page index |
+     * Usage: | $var= | get current page index |
+     *
+     * @return int representation of current page index
+     */
+    public int getCurrentPageIndex() { return getPageIndex(currentPage); }
 
     /**
      * Gets list of all pages in current browser context. Useful for fixture debugging.
