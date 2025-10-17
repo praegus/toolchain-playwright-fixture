@@ -16,10 +16,10 @@ jobs:
           java-version: 11
           cache: maven
           server-id: central
-          server-username: MAVEN_CENTRAL_USERNAME
-          server-password: MAVEN_CENTRAL_PASSWORD
+          server-username: ${{ secrets.MAVEN_CENTRAL_USER }}
+          server-password: ${{ secrets.MAVEN_CENTRAL_PASS }}
           gpg-private-key: ${{ secrets.gpg_private_key }}
-          gpg-passphrase: GPG_PASSPHRASE
+          gpg-passphrase: ${{ secrets.gpg_passphrase }}
       - name: Unsnapshot version
         run: mvn versions:set -DremoveSnapshot
       - name: Configure Maven and deploy
