@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
-      - name: Set up Java
+      - name: Set up Maven Central Repository
         uses: actions/setup-java@v4
         with:
           distribution: temurin
