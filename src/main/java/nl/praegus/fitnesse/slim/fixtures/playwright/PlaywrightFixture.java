@@ -12,6 +12,7 @@ import nl.hsac.fitnesse.fixture.slim.SlimFixtureException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -1099,7 +1100,7 @@ public class PlaywrightFixture extends SlimFixture {
      * mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="show-trace trace.zip" is preferred.
      */
     @Deprecated(since = "1.4.0")
-    public void openTrace(String name) throws IOException, InterruptedException {
+    public void openTrace(String name) throws IOException, InterruptedException, URISyntaxException {
         String[] args = {"show-trace", tracesFolder + "/" + name + ".zip"};
         CLI.main(args);
     }
